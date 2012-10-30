@@ -16,7 +16,6 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Prefs = Me.imports.prefs;
 
-// const MAX_SEARCH_RESULTS_ROWS = 5;
 const MAX_SEARCH_RESULTS_COLUMNS = 2
 const ICON_SIZE = 120;
 
@@ -367,7 +366,6 @@ const WikipediaProvider = new Lang.Class({
     createResultContainerActor: function() {
         let grid = new IconGrid.IconGrid({
             rowLimit: settings.get_int(Prefs.WIKI_RESULTS_ROWS),
-            // rowLimit: MAX_SEARCH_RESULTS_ROWS,
             //columnLimit: MAX_SEARCH_RESULTS_COLUMNS,
             xAlign: St.Align.START
         });
