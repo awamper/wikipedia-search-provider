@@ -1,0 +1,11 @@
+{
+  "description": "wikipedia.org", 
+  "name": "Wikipedia Search Provider", 
+  "shell-version": [
+    "3.4"
+  ], 
+  "url": "", 
+  "settings-schema": "org.gnome.shell.extensions.wikipedia-search-provider",
+  "uuid": "wikipedia_search_provider@awamper.gmail.com", 
+  "dev-version": 0.3
+}

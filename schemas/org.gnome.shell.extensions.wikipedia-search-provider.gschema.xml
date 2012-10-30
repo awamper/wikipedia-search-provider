@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extensions">
+
+  <enum id='org.gnome.shell.extensions.wikipedia-search-provider.Themes'>
+    <value value='0' nick='light'/>
+    <value value='1' nick='dark'/>
+  </enum>
+
+  <schema path="/org/gnome/shell/extensions/wikipedia-search-provider/" id="org.gnome.shell.extensions.wikipedia-search-provider">
+
+    <key type="s" name="keyword">
+      <default>"w"</default>
+      <summary>Search keyword</summary>
+      <description>Search keyword</description>
+    </key>
+
+    <key type="s" name="default-language">
+      <default>"en"</default>
+      <summary>Default language</summary>
+      <description>Default language</description>
+    </key>
+
+    <key type="i" name="delay-time">
+      <default>700</default>
+      <summary>Delay time</summary>
+      <description>Delay time in milliseconds.</description>
+    </key>
+
+    <key name="theme" enum="org.gnome.shell.extensions.wikipedia-search-provider.Themes">
+      <default>"light"</default>
+      <summary>Theme</summary>
+      <description>Theme</description>
+    </key>
+
+  </schema>
+</schemalist>
