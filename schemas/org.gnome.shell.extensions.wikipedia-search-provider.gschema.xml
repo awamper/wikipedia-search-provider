@@ -26,6 +26,12 @@
       <description>Delay time in milliseconds.</description>
     </key>
 
+    <key type="i" name="results-rows">
+      <default>5</default>
+      <summary>Max results rows</summary>
+      <description>Max results rows.</description>
+    </key>
+
     <key name="theme" enum="org.gnome.shell.extensions.wikipedia-search-provider.Themes">
       <default>"light"</default>
       <summary>Theme</summary>

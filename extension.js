@@ -16,7 +16,7 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Prefs = Me.imports.prefs;
 
-const MAX_SEARCH_RESULTS_ROWS = 5;
+// const MAX_SEARCH_RESULTS_ROWS = 5;
 const MAX_SEARCH_RESULTS_COLUMNS = 2
 const ICON_SIZE = 120;
 
@@ -197,7 +197,7 @@ const WikipediaProvider = new Lang.Class({
 
         if(titles_string) {
             titles_string = encodeURIComponent(titles_string);
-            let exlimit = MAX_SEARCH_RESULTS_ROWS * MAX_SEARCH_RESULTS_COLUMNS;
+            let exlimit = settings.get_int(Prefs.WIKI_RESULTS_ROWS) * MAX_SEARCH_RESULTS_COLUMNS;
             let api_query_extracts = "action=query&prop=extracts&format=json&exlimit="+exlimit+"&explaintext&exsectionformat=plain&exchars=300&exintro=&redirects=&titles="+titles_string;
             let url = get_wikipedia_url(WIKIPEDIA_API_URL, api_query_extracts);
             let here = this;
@@ -223,8 +223,8 @@ const WikipediaProvider = new Lang.Class({
     _get_wiki_titles: function(term, fun) {
         if(term) {
             term = encodeURIComponent(term);
-            let exlimit = MAX_SEARCH_RESULTS_ROWS * MAX_SEARCH_RESULTS_COLUMNS;
-            let api_query_titles = "action=opensearch&format=json&limit="+exlimit+"&search="+term;
+            let limit = settings.get_int(Prefs.WIKI_RESULTS_ROWS) * MAX_SEARCH_RESULTS_COLUMNS;
+            let api_query_titles = "action=opensearch&format=json&limit="+limit+"&search="+term;
             let url = get_wikipedia_url(WIKIPEDIA_API_URL, api_query_titles);
             let here = this;
             let request = Soup.Message.new('GET', url);
@@ -366,7 +366,8 @@ const WikipediaProvider = new Lang.Class({
 
     createResultContainerActor: function() {
         let grid = new IconGrid.IconGrid({
-            rowLimit: MAX_SEARCH_RESULTS_ROWS,
+            rowLimit: settings.get_int(Prefs.WIKI_RESULTS_ROWS),
+            // rowLimit: MAX_SEARCH_RESULTS_ROWS,
             //columnLimit: MAX_SEARCH_RESULTS_COLUMNS,
             xAlign: St.Align.START
         });

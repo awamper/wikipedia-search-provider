@@ -21,6 +21,7 @@ let extensionPath = Me.path;
 const WIKI_THEME = 'theme';
 const WIKI_KEYWORD = 'keyword';
 const WIKI_DELAY_TIME = 'delay-time';
+const WIKI_RESULTS_ROWS = 'results-rows';
 const WIKI_DEFAULT_LANGUAGE = 'default-language';
 
 const Themes = {
@@ -61,6 +62,13 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
             lower: 100,
             upper: 5000,
             step_increment: 100
+        });
+
+        // results rows
+        this._results_rows = this.addSpin('Max results rows:', WIKI_RESULTS_ROWS, {
+            lower: 1,
+            upper: 10,
+            step_increment: 1
         });
 
         // theme
