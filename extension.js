@@ -282,7 +282,7 @@ const WikipediaProvider = new Lang.Class({
                     else {
                         let nothing_found = [{
                             "title": "Wikipedia Search Provider",
-                            "extract": "Your search - "+term+" - did not match any documents.\nLanguage: "+settings.get_string(Prefs.WIKI_DEFAULT_LANGUAGE);,
+                            "extract": "Your search - "+term+" - did not match any documents.\nLanguage: "+settings.get_string(Prefs.WIKI_DEFAULT_LANGUAGE),
                             "show_icon": true
                         }]
                         this.searchSystem.pushResults(this, nothing_found);
@@ -292,7 +292,7 @@ const WikipediaProvider = new Lang.Class({
             else {
                 let nothing_found = [{
                     "title": "Wikipedia Search Provider",
-                    "extract": "Your search - "+term+" - did not match any documents.\nLanguage: "+settings.get_string(Prefs.WIKI_DEFAULT_LANGUAGE);,
+                    "extract": "Your search - "+term+" - did not match any documents.\nLanguage: "+settings.get_string(Prefs.WIKI_DEFAULT_LANGUAGE),
                     "show_icon": true
                 }]
                 this.searchSystem.pushResults(this, nothing_found);
