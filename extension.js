@@ -300,7 +300,7 @@ const WikipediaProvider = new Lang.Class({
     },
 
     getInitialResultSetAsync: function(terms) {
-        if(this.delay_query_id) {
+        if(this.delay_query_id > 0) {
             Mainloop.source_remove(this.delay_query_id);
             this.delay_query_id = 0;
         }
