@@ -302,6 +302,7 @@ const WikipediaProvider = new Lang.Class({
     getInitialResultSetAsync: function(terms) {
         if(this.delay_query_id) {
             Mainloop.source_remove(this.delay_query_id);
+            this.delay_query_id = 0;
         }
 
         let terms_string = terms.join(" ");
