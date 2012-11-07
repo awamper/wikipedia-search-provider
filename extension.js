@@ -251,13 +251,6 @@ const WikipediaProvider = new Lang.Class({
     },
 
     _search: function(term) {
-        let searching = [{
-            "title": "Wikipedia Search Provider",
-            "extract": "Searching for '"+term+"'...",
-            "show_icon": true
-        }]
-        this.searchSystem.pushResults(this, searching);
-
         this._get_wiki_titles(term, function(titles) {
             if(titles) {
                 this._get_wiki_extracts(titles, function(extracts) {
@@ -309,6 +302,13 @@ const WikipediaProvider = new Lang.Class({
         let query = this._parse_query(terms_string);
 
         if(query.wikipedia_query) {
+            let searching = [{
+                "title": "Wikipedia Search Provider",
+                "extract": "Searching for '"+query.term+"'...",
+                "show_icon": true
+            }]
+            this.searchSystem.pushResults(this, searching);
+
             if(query.term) {
                 if(query.lang.length > 0) {
                     wikipedia_language = query.lang;
