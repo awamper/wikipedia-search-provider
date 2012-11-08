@@ -22,7 +22,9 @@ const ICON_SIZE = 120;
 const WIKIPEDIA_DOMAIN = "wikipedia.org";
 const WIKIPEDIA_API_URL = "/w/api.php";
 
+const shell_version = imports.misc.config.PACKAGE_VERSION;
 const settings = Convenience.getSettings();
+
 let wikipedia_language = settings.get_string(Prefs.WIKI_DEFAULT_LANGUAGE);
 let wikipediaProvider = "";
 
@@ -32,6 +34,12 @@ Soup.Session.prototype.add_feature.call(
     new Soup.ProxyResolverDefault()
 );
 _httpSession.user_agent = 'Gnome-Shell Wikipedia Search Provider';
+
+if (typeof String.prototype.starts_with != 'function') {
+    String.prototype.starts_with = function(str) {
+        return this.slice(0, str.length) == str;
+    };
+}
 
 function get_wikipedia_url(api_url, api_query_string) {
     let result_url = '';
@@ -62,11 +70,14 @@ function get_icon(url) {
     }
     else {
         result = new St.Icon({
-            icon_type: St.IconType.FULLCOLOR,
             icon_size: ICON_SIZE,
             icon_name: 'wikipedia',
             style_class: 'wikipedia-icon-'+settings.get_string(Prefs.WIKI_THEME)
         });
+
+        if(shell_version.starts_with('3.5')) {
+            result.icon_type = St.IconType.FULLCOLOR
+        }
     }
 
     return result;
@@ -339,7 +350,15 @@ const WikipediaProvider = new Lang.Class({
         }
     },
 
+    getInitialResultSet: function (terms) {
+        this.getInitialResultSetAsync(terms);
+    },
+
     getSubsearchResultSetAsync: function(prevResults, terms) {
+        this.getInitialResultSetAsync(terms);
+    },
+
+    getSubsearchResultSet: function(prevResults, terms) {
         this.getInitialResultSetAsync(terms);
     },
 
@@ -356,6 +375,10 @@ const WikipediaProvider = new Lang.Class({
         }
 
         callback(metas);
+    },
+
+    getResultMetas: function(result, callback) {
+        this.getResultMetasAsync(result, callback)
     },
 
     createResultActor: function(resultMeta, terms) {
@@ -409,6 +432,13 @@ function init() {
 
 function enable() {
     Main.overview.addSearchProvider(wikipediaProvider);
+
+    if(shell_version.starts_with('3.6')) {
+        let search_results = Main.overview._viewSelector._searchResults;
+        let provider_meta = search_results._metaForProvider(wikipediaProvider);
+        provider_meta.resultDisplay._grid.actor.style_class = 'wikipedia-grid';
+        provider_meta.resultDisplay._grid._rowLimit = settings.get_int(Prefs.WIKI_RESULTS_ROWS);
+    }
 }
 
 function disable() {
