@@ -75,7 +75,7 @@ function get_icon(url) {
             style_class: 'wikipedia-icon-'+settings.get_string(Prefs.WIKI_THEME)
         });
 
-        if(shell_version.starts_with('3.5')) {
+        if(shell_version.starts_with('3.4')) {
             result.icon_type = St.IconType.FULLCOLOR
         }
     }
