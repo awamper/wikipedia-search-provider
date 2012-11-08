@@ -35,10 +35,8 @@ Soup.Session.prototype.add_feature.call(
 );
 _httpSession.user_agent = 'Gnome-Shell Wikipedia Search Provider';
 
-if (typeof String.prototype.starts_with != 'function') {
-    String.prototype.starts_with = function(str) {
-        return this.slice(0, str.length) == str;
-    };
+function starts_with(str1, str2) {
+    return str1.slice(0, str2.length) == str2;
 }
 
 function get_wikipedia_url(api_url, api_query_string) {
@@ -75,7 +73,7 @@ function get_icon(url) {
             style_class: 'wikipedia-icon-'+settings.get_string(Prefs.WIKI_THEME)
         });
 
-        if(shell_version.starts_with('3.4')) {
+        if(starts_with(shell_version, '3.4')) {
             result.icon_type = St.IconType.FULLCOLOR
         }
     }
@@ -433,7 +431,7 @@ function init() {
 function enable() {
     Main.overview.addSearchProvider(wikipediaProvider);
 
-    if(shell_version.starts_with('3.6')) {
+    if(starts_with(shell_version, '3.6')) {
         let search_results = Main.overview._viewSelector._searchResults;
         let provider_meta = search_results._metaForProvider(wikipediaProvider);
         provider_meta.resultDisplay._grid.actor.style_class = 'wikipedia-grid';
