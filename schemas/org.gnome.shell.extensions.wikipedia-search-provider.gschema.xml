@@ -20,6 +20,26 @@
       <description>Default language</description>
     </key>
 
+    <key type="i" name="max-chars">
+      <default>450</default>
+    </key>
+
+    <key type="i" name="title-font-size">
+      <default>18</default>
+    </key>
+
+    <key type="i" name="extract-font-size">
+      <default>12</default>
+    </key>
+
+    <key type="i" name="result-width">
+      <default>500</default>
+    </key>
+
+    <key type="i" name="result-height">
+      <default>170</default>
+    </key>
+
     <key type="i" name="delay-time">
       <default>700</default>
       <summary>Delay time</summary>

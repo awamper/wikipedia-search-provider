@@ -93,8 +93,15 @@ const WikipediaResultActor = new Lang.Class({
             accessible_role: Atk.Role.PUSH_BUTTON
         });
 
+        let content_width = settings.get_int(Prefs.WIKI_RESULT_WIDTH);
+        let content_height = settings.get_int(Prefs.WIKI_RESULT_HEIGHT);
+        let style_string = 
+            'width: '+content_width+'px;'+
+            'height: '+content_height+'px;';
+
         let content = new St.BoxLayout({
             style_class: 'wikipedia-content-'+settings.get_string(Prefs.WIKI_THEME),
+            style: style_string,
             vertical: false
         });
         this.actor.set_child(content);
@@ -124,7 +131,8 @@ const WikipediaResultActor = new Lang.Class({
 
         let title = new St.Label({
             text: resultMeta.title,
-            style_class: 'wikipedia-details-title-'+settings.get_string(Prefs.WIKI_THEME)
+            style_class: 'wikipedia-details-title-'+settings.get_string(Prefs.WIKI_THEME),
+            style: 'font-size: '+settings.get_int(Prefs.WIKI_TITLE_FONT_SIZE)+'px;'
         });
 
         details.add(title, {
@@ -137,7 +145,8 @@ const WikipediaResultActor = new Lang.Class({
 
         let extract_box = new St.BoxLayout({
             vertical: true,
-            style_class: 'wikipedia-details-extract-'+settings.get_string(Prefs.WIKI_THEME)
+            style_class: 'wikipedia-details-extract-'+settings.get_string(Prefs.WIKI_THEME),
+            style: 'font-size: '+settings.get_int(Prefs.WIKI_EXTRACT_FONT_SIZE)+'px;'
         });
 
         let extract = new URLHighlighter(
@@ -205,8 +214,14 @@ const WikipediaProvider = new Lang.Class({
 
         if(titles_string) {
             titles_string = encodeURIComponent(titles_string);
-            let exlimit = settings.get_int(Prefs.WIKI_RESULTS_ROWS) * MAX_SEARCH_RESULTS_COLUMNS;
-            let api_query_extracts = "action=query&prop=extracts&format=json&exlimit="+exlimit+"&explaintext&exsectionformat=plain&exchars=300&exintro=&redirects=&titles="+titles_string;
+            let exlimit = 
+                settings.get_int(Prefs.WIKI_RESULTS_ROWS) *
+                MAX_SEARCH_RESULTS_COLUMNS;
+            let max_chars = settings.get_int(Prefs.WIKI_MAX_CHARS);
+            let api_query_extracts = 
+                "action=query&prop=extracts&format=json&exlimit="+exlimit+
+                "&explaintext&exsectionformat=plain&exchars="+max_chars+
+                "&exintro=&redirects=&titles="+titles_string;
             let url = get_wikipedia_url(WIKIPEDIA_API_URL, api_query_extracts);
             let here = this;
             let request = Soup.Message.new('GET', url);
@@ -393,6 +408,13 @@ const WikipediaProvider = new Lang.Class({
         });
         grid.actor.style_class = 'wikipedia-grid';
 
+        let width = settings.get_int(Prefs.WIKI_RESULT_WIDTH);
+        let height = settings.get_int(Prefs.WIKI_RESULT_HEIGHT); 
+        let style_string = 
+            '-shell-grid-horizontal-item-size: '+width+'px;'+
+            '-shell-grid-vertical-item-size: '+height+'px;'
+        grid.actor.style = style_string;
+
         let actor = new SearchDisplay.GridSearchResults(this, grid);
         return actor;
     },
@@ -436,6 +458,12 @@ function enable() {
         let provider_meta = search_results._metaForProvider(wikipediaProvider);
         provider_meta.resultDisplay._grid.actor.style_class = 'wikipedia-grid';
         provider_meta.resultDisplay._grid._rowLimit = settings.get_int(Prefs.WIKI_RESULTS_ROWS);
+
+        let width = settings.get_int(Prefs.WIKI_RESULT_WIDTH);
+        let height = settings.get_int(Prefs.WIKI_RESULT_HEIGHT); 
+        provider_meta.resultDisplay._grid.actor.style = 
+            '-shell-grid-horizontal-item-size: '+width+'px;'+
+            '-shell-grid-vertical-item-size: '+height+'px;'
     }
 }
 

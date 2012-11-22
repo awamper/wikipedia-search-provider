@@ -23,6 +23,11 @@ const WIKI_KEYWORD = 'keyword';
 const WIKI_DELAY_TIME = 'delay-time';
 const WIKI_RESULTS_ROWS = 'results-rows';
 const WIKI_DEFAULT_LANGUAGE = 'default-language';
+const WIKI_MAX_CHARS = 'max-chars';
+const WIKI_TITLE_FONT_SIZE = 'title-font-size';
+const WIKI_EXTRACT_FONT_SIZE = 'extract-font-size';
+const WIKI_RESULT_WIDTH = 'result-width';
+const WIKI_RESULT_HEIGHT = 'result-height';
 
 const Themes = {
     LIGHT: 0,
@@ -64,6 +69,27 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
             step_increment: 100
         });
 
+        // max chars
+        this._max_chars = this.addSpin('Max chars:', WIKI_MAX_CHARS, {
+            lower: 50,
+            upper: 2000,
+            step_increment: 50
+        });
+
+        // title font size
+        this._title_font_size = this.addSpin('Title font size(px):', WIKI_TITLE_FONT_SIZE, {
+            lower: 1,
+            upper: 40,
+            step_increment: 1
+        });
+
+        // extract font size
+        this._extract_font_size = this.addSpin('Extract font size(px):', WIKI_EXTRACT_FONT_SIZE, {
+            lower: 1,
+            upper: 20,
+            step_increment: 1
+        });
+
         // results rows
         this._results_rows = this.addSpin('Max results rows:', WIKI_RESULTS_ROWS, {
             lower: 1,
@@ -92,6 +118,22 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
             }
         }));
         this.addRow("Theme:", item);
+
+        //needs restart
+        this.addItem(new Gtk.Label({label: 'Needs restart shell'}));
+        // result width
+        this._result_width = this.addSpin('Width(px):', WIKI_RESULT_WIDTH, {
+            lower: 100,
+            upper: 1500,
+            step_increment: 10
+        });
+
+        // result height
+        this._result_height = this.addSpin('Height(px):', WIKI_RESULT_HEIGHT, {
+            lower: 50,
+            upper: 1500,
+            step_increment: 10
+        });
     },
 
     addEntry: function (text, key) {
