@@ -162,7 +162,10 @@ const WikipediaResultActor = new Lang.Class({
             y_align: St.Align.START
         });
 
-        details.add(extract_box, {
+        let extract_scroll_view = new St.ScrollView();
+        extract_scroll_view.add_actor(extract_box);
+
+        details.add(extract_scroll_view, {
             x_fill: false,
             y_fill: true,
             x_align: St.Align.START,
