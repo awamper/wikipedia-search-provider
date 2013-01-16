@@ -27,6 +27,12 @@ const WIKIPEDIA_API_URL = "/w/api.php";
 
 const shell_version = imports.misc.config.PACKAGE_VERSION;
 const settings = Convenience.getSettings();
+settings.connect('changed::'+Prefs.WIKI_ENABLE_SHORTCUTS, function() {
+    let enable = settings.get_boolean(Prefs.WIKI_ENABLE_SHORTCUTS);
+
+    if(enable) add_wiki_keybindings();
+    else remove_wiki_keybindings();
+});
 
 let wikipedia_language = settings.get_string(Prefs.WIKI_DEFAULT_LANGUAGE);
 let wikipediaProvider = "";
@@ -145,6 +151,30 @@ function run_wiki_search(text) {
     else {
         Main.overview._searchEntry.set_text(search_text);
     }
+}
+
+function add_wiki_keybindings() {
+    global.display.add_keybinding(
+        Prefs.WIKI_SEARCH_FROM_CLIPBOARD,
+        settings,
+        Meta.KeyBindingFlags.NONE,
+        Lang.bind(this, function() {
+            search_from_clipborad();
+        })
+    );
+    global.display.add_keybinding(
+        Prefs.WIKI_SEARCH_FROM_PRIMARY_SELECTION,
+        settings,
+        Meta.KeyBindingFlags.NONE,
+        Lang.bind(this, function() {
+            search_from_primary_selection();
+        })
+    );
+}
+
+function remove_wiki_keybindings() {
+    global.display.remove_keybinding(Prefs.WIKI_SEARCH_FROM_CLIPBOARD);
+    global.display.remove_keybinding(Prefs.WIKI_SEARCH_FROM_PRIMARY_SELECTION);
 }
 
 const WikipediaResultActor = new Lang.Class({
@@ -525,22 +555,9 @@ function init() {
 function enable() {
     Main.overview.addSearchProvider(wikipediaProvider);
 
-    global.display.add_keybinding(
-        Prefs.WIKI_SEARCH_FROM_CLIPBOARD,
-        settings,
-        Meta.KeyBindingFlags.NONE,
-        Lang.bind(this, function() {
-            search_from_clipborad();
-        })
-    );
-    global.display.add_keybinding(
-        Prefs.WIKI_SEARCH_FROM_PRIMARY_SELECTION,
-        settings,
-        Meta.KeyBindingFlags.NONE,
-        Lang.bind(this, function() {
-            search_from_primary_selection();
-        })
-    );
+    if(settings.get_boolean(Prefs.WIKI_ENABLE_SHORTCUTS)) {
+        add_wiki_keybindings();
+    }
 
     if(starts_with(shell_version, '3.6')) {
         let search_results = Main.overview._viewSelector._searchResults;
@@ -559,4 +576,8 @@ function enable() {
 
 function disable() {
     Main.overview.removeSearchProvider(wikipediaProvider);
+
+    if(settings.get_boolean(Prefs.WIKI_ENABLE_SHORTCUTS)) {
+        remove_wiki_keybindings();
+    }
 }

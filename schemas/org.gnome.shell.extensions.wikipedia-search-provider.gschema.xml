@@ -8,6 +8,10 @@
 
   <schema path="/org/gnome/shell/extensions/wikipedia-search-provider/" id="org.gnome.shell.extensions.wikipedia-search-provider">
 
+    <key type="b" name="enable-shortcuts">
+        <default>true</default>
+    </key>
+
     <key type="as" name="search-from-clipboard">
       <default><![CDATA[['<Super>W']]]></default>
     </key>

@@ -30,6 +30,7 @@ const WIKI_RESULT_WIDTH = 'result-width';
 const WIKI_RESULT_HEIGHT = 'result-height';
 const WIKI_SEARCH_FROM_CLIPBOARD = 'search-from-clipboard';
 const WIKI_SEARCH_FROM_PRIMARY_SELECTION = 'search-from-primary-selection';
+const WIKI_ENABLE_SHORTCUTS = 'enable-shortcuts';
 
 const Themes = {
     LIGHT: 0,
@@ -139,12 +140,29 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         // shortcuts
         this.addItem(new Gtk.Label({label: 'Shortcuts'}));
-        this.addShortcut('Search from clipboard:', WIKI_SEARCH_FROM_CLIPBOARD);
-        this.addShortcut(
+
+        let enable_shortcuts = this.addBoolean('Shortcuts:', WIKI_ENABLE_SHORTCUTS);
+        enable_shortcuts.connect('notify::active',
+            Lang.bind(this, function(s) {
+                let active = s.get_active();
+                clipboard.set_sensitive(active);
+                primary_selection.set_sensitive(active);
+            })
+        );
+
+        let shortcuts_enabled = this._settings.get_boolean(WIKI_ENABLE_SHORTCUTS);
+
+        let clipboard = this.addShortcut(
+            'Search from clipboard:',
+            WIKI_SEARCH_FROM_CLIPBOARD
+        );
+        clipboard.set_sensitive(shortcuts_enabled)
+        let primary_selection = this.addShortcut(
             'Search from primary selection(requires '+
             '<a href="http://sourceforge.net/projects/xclip/">xclip</a>):',
             WIKI_SEARCH_FROM_PRIMARY_SELECTION
         );
+        primary_selection.set_sensitive(shortcuts_enabled);
     },
 
     addEntry: function (text, key) {
