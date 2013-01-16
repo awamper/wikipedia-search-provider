@@ -85,3 +85,35 @@
 .wikipedia-details-extract-light {
     font-size: 12px;
 }
+
+/* Notify Popup */
+.notify-popup-modal {
+    border-radius: 5px;
+    background-color: rgba(0.0, 0.0, 0.0, 0.7);
+
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.notify-popup-box {
+    border: 1px solid rgba(245,245,245,0.2);
+}
+
+.notify-popup-icon {
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    icon-size: 35px;
+    color: #8d8f8a;
+}
+
+.notify-popup-label {
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    font-size: 35px;
+}

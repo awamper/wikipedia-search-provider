@@ -28,6 +28,8 @@ const WIKI_TITLE_FONT_SIZE = 'title-font-size';
 const WIKI_EXTRACT_FONT_SIZE = 'extract-font-size';
 const WIKI_RESULT_WIDTH = 'result-width';
 const WIKI_RESULT_HEIGHT = 'result-height';
+const WIKI_SEARCH_FROM_CLIPBOARD = 'search-from-clipboard';
+const WIKI_SEARCH_FROM_PRIMARY_SELECTION = 'search-from-primary-selection';
 
 const Themes = {
     LIGHT: 0,
@@ -134,6 +136,15 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
             upper: 1500,
             step_increment: 10
         });
+
+        // shortcuts
+        this.addItem(new Gtk.Label({label: 'Shortcuts'}));
+        this.addShortcut('Search from clipboard:', WIKI_SEARCH_FROM_CLIPBOARD);
+        this.addShortcut(
+            'Search from primary selection(requires '+
+            '<a href="http://sourceforge.net/projects/xclip/">xclip</a>):',
+            WIKI_SEARCH_FROM_PRIMARY_SELECTION
+        );
     },
 
     addEntry: function (text, key) {
@@ -173,11 +184,29 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
         return this.addRow(label, spinButton, true);
     },
 
+    addShortcut: function(text, settings_key) {
+        let item = new Gtk.Entry({
+            hexpand: false
+        });
+        item.set_text(this._settings.get_strv(settings_key)[0]);
+        item.connect('changed', Lang.bind(this, function(entry) {
+            let [key, mods] = Gtk.accelerator_parse(entry.get_text());
+
+            if(Gtk.accelerator_valid(key, mods)) {
+                let shortcut = Gtk.accelerator_name(key, mods);
+                this._settings.set_strv(settings_key, [shortcut]);
+            }
+        }));
+
+        return this.addRow(text, item);
+    },
+
     addRow: function (text, widget, wrap) {
         let label = new Gtk.Label({
             label: text,
             hexpand: true,
-            halign: Gtk.Align.START
+            halign: Gtk.Align.START,
+            use_markup: true
         });
         label.set_line_wrap(wrap || false);
         this.attach(label, 0, this._rownum, 1, 1); // col, row, colspan, rowspan

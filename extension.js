@@ -10,11 +10,14 @@ const Util = imports.misc.util;
 const URLHighlighter = imports.ui.messageTray.URLHighlighter;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
+const Meta = imports.gi.Meta;
+const GLib = imports.gi.GLib;
 const ExtensionUtils = imports.misc.extensionUtils;
 
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Prefs = Me.imports.prefs;
+const NotifyPopup = Me.imports.notify_popup;
 
 const MAX_SEARCH_RESULTS_COLUMNS = 2
 const ICON_SIZE = 120;
@@ -79,6 +82,61 @@ function get_icon(url) {
     }
 
     return result;
+}
+
+function get_primary_selection() {
+    let result = '';
+
+    try {
+        let r = GLib.spawn_command_line_sync('xclip -o');
+        let selection = r[1].toString().trim();
+
+        if(r[0] == true && !is_blank(selection)) {
+            result = selection;
+        }
+    }
+    catch(e) {
+        result = '';
+    }
+
+    return result;
+}
+
+function search_from_primary_selection() {
+    let text = get_primary_selection();
+
+    if(!is_blank(text)) {
+        run_wiki_search(text)
+    }
+    else {
+        NotifyPopup.show_popup(
+            'Primary selection is empty.',
+            NotifyPopup.ICONS.information,
+            750
+        );
+    }
+}
+
+function search_from_clipborad() {
+    let clipboard = St.Clipboard.get_default();
+    clipboard.get_text(Lang.bind(this, function(clipboard, text) {
+        if(!is_blank(text)) {
+            run_wiki_search(text);
+        }
+        else {
+            NotifyPopup.show_popup(
+                'Clipboard is empty.',
+                NotifyPopup.ICONS.information,
+                750
+            );
+        }
+    }));
+}
+
+function run_wiki_search(text) {
+    let keyword = settings.get_string(Prefs.WIKI_KEYWORD);
+    Main.overview.show();
+    Main.overview._searchEntry.set_text(keyword+' '+text);
 }
 
 const WikipediaResultActor = new Lang.Class({
@@ -458,6 +516,23 @@ function init() {
 
 function enable() {
     Main.overview.addSearchProvider(wikipediaProvider);
+
+    global.display.add_keybinding(
+        Prefs.WIKI_SEARCH_FROM_CLIPBOARD,
+        settings,
+        Meta.KeyBindingFlags.NONE,
+        Lang.bind(this, function() {
+            search_from_clipborad();
+        })
+    );
+    global.display.add_keybinding(
+        Prefs.WIKI_SEARCH_FROM_PRIMARY_SELECTION,
+        settings,
+        Meta.KeyBindingFlags.NONE,
+        Lang.bind(this, function() {
+            search_from_primary_selection();
+        })
+    );
 
     if(starts_with(shell_version, '3.6')) {
         let search_results = Main.overview._viewSelector._searchResults;

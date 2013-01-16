@@ -8,6 +8,13 @@
 
   <schema path="/org/gnome/shell/extensions/wikipedia-search-provider/" id="org.gnome.shell.extensions.wikipedia-search-provider">
 
+    <key type="as" name="search-from-clipboard">
+      <default><![CDATA[['<Super>W']]]></default>
+    </key>
+    <key type="as" name="search-from-primary-selection">
+      <default><![CDATA[['<Super><Shift>W']]]></default>
+    </key>
+
     <key type="s" name="keyword">
       <default>"w"</default>
       <summary>Search keyword</summary>
