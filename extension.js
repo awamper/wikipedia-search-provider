@@ -136,7 +136,15 @@ function search_from_clipborad() {
 function run_wiki_search(text) {
     let keyword = settings.get_string(Prefs.WIKI_KEYWORD);
     Main.overview.show();
-    Main.overview._searchEntry.set_text(keyword+' '+text);
+
+    let search_text = keyword+' '+text;
+
+    if(starts_with(shell_version, '3.4')) {
+        Main.overview._viewSelector._searchTab._entry.set_text(search_text)
+    }
+    else {
+        Main.overview._searchEntry.set_text(search_text);
+    }
 }
 
 const WikipediaResultActor = new Lang.Class({
