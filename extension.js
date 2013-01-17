@@ -570,7 +570,7 @@ function enable() {
         let height = settings.get_int(Prefs.WIKI_RESULT_HEIGHT); 
         provider_meta.resultDisplay._grid.actor.style = 
             '-shell-grid-horizontal-item-size: '+width+'px;'+
-            '-shell-grid-vertical-item-size: '+height+'px;'
+            '-shell-grid-vertical-item-size: '+height+'px;';
     }
 }
 
