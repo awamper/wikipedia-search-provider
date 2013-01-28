@@ -17,7 +17,6 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Prefs = Me.imports.prefs;
-const NotifyPopup = Me.imports.notify_popup;
 
 const MAX_SEARCH_RESULTS_COLUMNS = 2
 const ICON_SIZE = 120;
@@ -27,12 +26,6 @@ const WIKIPEDIA_API_URL = "/w/api.php";
 
 const shell_version = imports.misc.config.PACKAGE_VERSION;
 const settings = Convenience.getSettings();
-settings.connect('changed::'+Prefs.WIKI_ENABLE_SHORTCUTS, function() {
-    let enable = settings.get_boolean(Prefs.WIKI_ENABLE_SHORTCUTS);
-
-    if(enable) add_wiki_keybindings();
-    else remove_wiki_keybindings();
-});
 
 let wikipedia_language = settings.get_string(Prefs.WIKI_DEFAULT_LANGUAGE);
 let wikipediaProvider = "";
@@ -115,11 +108,7 @@ function search_from_primary_selection() {
         run_wiki_search(text)
     }
     else {
-        NotifyPopup.show_popup(
-            'Primary selection is empty.',
-            NotifyPopup.ICONS.information,
-            750
-        );
+        Main.notify('Primary selection is empty.');
     }
 }
 
@@ -130,11 +119,7 @@ function search_from_clipborad() {
             run_wiki_search(text);
         }
         else {
-            NotifyPopup.show_popup(
-                'Clipboard is empty.',
-                NotifyPopup.ICONS.information,
-                750
-            );
+            Main.notify('Clipboard is empty.');
         }
     }));
 }
@@ -552,12 +537,24 @@ function init() {
     wikipediaProvider = new WikipediaProvider('WIKIPEDIA');
 }
 
+let settings_connection_id = 0;
+
 function enable() {
     Main.overview.addSearchProvider(wikipediaProvider);
 
     if(settings.get_boolean(Prefs.WIKI_ENABLE_SHORTCUTS)) {
         add_wiki_keybindings();
     }
+
+    settings_connection_id = settings.connect(
+        'changed::'+Prefs.WIKI_ENABLE_SHORTCUTS,
+        function() {
+            let enable = settings.get_boolean(Prefs.WIKI_ENABLE_SHORTCUTS);
+
+            if(enable) add_wiki_keybindings();
+            else remove_wiki_keybindings();
+        }
+    );
 
     if(starts_with(shell_version, '3.6')) {
         let search_results = Main.overview._viewSelector._searchResults;
@@ -576,6 +573,10 @@ function enable() {
 
 function disable() {
     Main.overview.removeSearchProvider(wikipediaProvider);
+
+    if(settings_connection_id > 0) {
+        settings.disconnect(settings_connection_id);
+    }
 
     if(settings.get_boolean(Prefs.WIKI_ENABLE_SHORTCUTS)) {
         remove_wiki_keybindings();
