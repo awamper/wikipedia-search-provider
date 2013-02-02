@@ -28,7 +28,6 @@ const shell_version = imports.misc.config.PACKAGE_VERSION;
 const settings = Convenience.getSettings();
 
 let wikipedia_language = settings.get_string(Prefs.WIKI_DEFAULT_LANGUAGE);
-let wikipediaProvider = "";
 
 const _httpSession = new Soup.SessionAsync();
 Soup.Session.prototype.add_feature.call(
@@ -534,12 +533,14 @@ const WikipediaProvider = new Lang.Class({
 });
 
 function init() {
-    wikipediaProvider = new WikipediaProvider('WIKIPEDIA');
+    // nothing
 }
 
 let settings_connection_id = 0;
+let wikipediaProvider = null;
 
 function enable() {
+    wikipediaProvider = new WikipediaProvider('WIKIPEDIA');
     Main.overview.addSearchProvider(wikipediaProvider);
 
     if(settings.get_boolean(Prefs.WIKI_ENABLE_SHORTCUTS)) {
@@ -572,7 +573,10 @@ function enable() {
 }
 
 function disable() {
-    Main.overview.removeSearchProvider(wikipediaProvider);
+    if(wikipediaProvider != null) {
+        Main.overview.removeSearchProvider(wikipediaProvider);
+        wikipediaProvider = null;
+    }
 
     if(settings_connection_id > 0) {
         settings.disconnect(settings_connection_id);
