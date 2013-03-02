@@ -42,7 +42,7 @@ function starts_with(str1, str2) {
 
 function get_wikipedia_url(api_url, api_query_string) {
     let result_url = '';
-    let protocol = "http://";
+    let protocol = "https://";
 
     result_url = protocol+wikipedia_language+'.'+WIKIPEDIA_DOMAIN;
 
@@ -510,7 +510,7 @@ const WikipediaProvider = new Lang.Class({
         let url = false;
 
         if(resultId) {
-            url = 'http://'+wikipedia_language+'.'+WIKIPEDIA_DOMAIN+'?curid='+resultId;
+            url = 'https://'+wikipedia_language+'.'+WIKIPEDIA_DOMAIN+'?curid='+resultId;
         }
 
         if(url) {
