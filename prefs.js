@@ -370,38 +370,6 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
             }
         );
 
-        // results rows
-        let results_rows = page.addSpin(
-            'Max results rows:',
-            WIKI_RESULTS_ROWS, {
-                lower: 1,
-                upper: 10,
-                step_increment: 1
-            }
-        );
-
-        // requires restart
-        page.addItem(new Gtk.Label({label: 'Requires restart shell'}));
-        // result width
-        page._result_width = page.addSpin(
-            'Width(px):',
-            WIKI_RESULT_WIDTH, {
-                lower: 100,
-                upper: 1500,
-                step_increment: 10
-            }
-        );
-
-        // result height
-        page._result_height = page.addSpin(
-            'Height(px):',
-            WIKI_RESULT_HEIGHT, {
-                lower: 50,
-                upper: 1500,
-                step_increment: 10
-            }
-        );
-
         let result = {
             label: page_label,
             page: page
@@ -436,14 +404,6 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
         let keybindings_widget = new WikipediaKeybindingsWidget(keybindings);
         keybindings_widget.set_sensitive(shortcuts_enabled);
         page.addItem(keybindings_widget)
-
-        let label_text =
-            '<sup>*</sup>Search from primary selection requires ' +
-            '<a href="http://sourceforge.net/projects/xclip/">xclip</a>';
-        page.addItem(new Gtk.Label({
-            label: label_text,
-            use_markup: true
-        }));
 
         let result = {
             label: page_label,

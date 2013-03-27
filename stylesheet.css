@@ -1,7 +1,7 @@
 .wikipedia-grid {
-    spacing: 36px;
-    -shell-grid-horizontal-item-size: 510px;
-    -shell-grid-vertical-item-size: 170px;
+    spacing: 15px;
+    -shell-grid-horizontal-item-size: 300px;
+    -shell-grid-vertical-item-size: 200px;
 }
 
 .wikipedia-dark {
@@ -18,8 +18,8 @@
 }
 
 .wikipedia-content-dark {
-    width: 500px;
-    height: 170px;
+    width: 290px;
+    height: 190px;
     border-radius: 10px;
     padding: 8px;
     background-color: rgba(0, 0, 0, 0.7);
@@ -59,8 +59,8 @@
 }
 
 .wikipedia-content-light {
-    width: 500px;
-    height: 170px;
+    width: 290px;
+    height: 190px;
     border-radius: 10px;
     padding: 8px;
     background-color: rgba(255, 255, 255, 0.5);
@@ -84,36 +84,4 @@
 
 .wikipedia-details-extract-light {
     font-size: 12px;
-}
-
-/* Notify Popup */
-.notify-popup-modal {
-    border-radius: 5px;
-    background-color: rgba(0.0, 0.0, 0.0, 0.7);
-
-    padding-right: 10px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    padding-top: 10px;
-}
-
-.notify-popup-box {
-    border: 1px solid rgba(245,245,245,0.2);
-}
-
-.notify-popup-icon {
-    padding-right: 5px;
-    padding-left: 5px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    icon-size: 35px;
-    color: #8d8f8a;
-}
-
-.notify-popup-label {
-    padding-right: 5px;
-    padding-left: 5px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    font-size: 35px;
 }
