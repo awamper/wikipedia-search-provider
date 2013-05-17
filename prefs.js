@@ -32,12 +32,16 @@ const WIKI_SEARCH_FROM_CLIPBOARD = 'search-from-clipboard';
 const WIKI_SEARCH_FROM_PRIMARY_SELECTION = 'search-from-primary-selection';
 const WIKI_ENABLE_SHORTCUTS = 'enable-shortcuts';
 
+const Gettext = imports.gettext.domain('wikipedia_search_provider');
+const _ = Gettext.gettext;
+
 const Themes = {
     LIGHT: 0,
     DARK: 1
 };
 
 function init() {
+    Convenience.initTranslations("wikipedia_search_provider");
 }
 
 const WikipediaKeybindingsWidget = new GObject.Class({
@@ -82,7 +86,7 @@ const WikipediaKeybindingsWidget = new GObject.Class({
 
         let action_renderer = new Gtk.CellRendererText();
         let action_column = new Gtk.TreeViewColumn({
-            'title': 'Action',
+            'title': _("Action"),
             'expand': true
         });
         action_column.pack_start(action_renderer, true);
@@ -100,7 +104,7 @@ const WikipediaKeybindingsWidget = new GObject.Class({
                     this._store.get_iter_from_string(iter);
 
                 if(!success) {
-                    printerr("Can't change keybinding");
+                    printerr(_("Can't change keybinding"));
                 }
 
                 let name = this._store.get_value(iterator, 0);
@@ -115,7 +119,7 @@ const WikipediaKeybindingsWidget = new GObject.Class({
         );
 
         let keybinding_column = new Gtk.TreeViewColumn({
-            'title': 'Modify'
+            'title': _("Modify")
         });
         keybinding_column.pack_end(keybinding_renderer, false);
         keybinding_column.add_attribute(
@@ -282,31 +286,31 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
     _get_main_page: function() {
         let page_label = new Gtk.Label({
-            label: 'Settings'
+            label: _("Settings")
         });
         let page = new WikipediaPrefsGrid();
 
         // keyword
         let keyword = page.addEntry(
-            "Keyword:",
+            _("Keyword:"),
             WIKI_KEYWORD
         );
 
         // default language
         let default_language = page.addEntry(
-            "Default language:",
+            _("Default language:"),
             WIKI_DEFAULT_LANGUAGE
         );
 
         // delay time
-        let delay = page.addSpin('Delay time(ms):', WIKI_DELAY_TIME, {
+        let delay = page.addSpin(_("Delay time(ms):"), WIKI_DELAY_TIME, {
             lower: 100,
             upper: 5000,
             step_increment: 100
         });
 
         // max chars
-        let max_chars = page.addSpin('Max chars:', WIKI_MAX_CHARS, {
+        let max_chars = page.addSpin(_("Max chars:"), WIKI_MAX_CHARS, {
             lower: 50,
             upper: 2000,
             step_increment: 50
@@ -321,7 +325,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
     _get_theme_page: function() {
         let page_label = new Gtk.Label({
-            label: 'Theme'
+            label: _("Theme")
         });
         let page = new WikipediaPrefsGrid();
 
@@ -348,11 +352,11 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
                 this._settings.set_enum(WIKI_THEME, value);
             }
         }));
-        page.addRow("Theme:", item);
+        page.addRow(_("Theme:"), item);
 
         // title font size
         let title_font_size = page.addSpin(
-            'Title font size(px):',
+            _("Title font size(px):"),
             WIKI_TITLE_FONT_SIZE, {
                 lower: 1,
                 upper: 40,
@@ -362,7 +366,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         // extract font size
         let extract_font_size = page.addSpin(
-            'Extract font size(px):',
+            _("Extract font size(px):"),
             WIKI_EXTRACT_FONT_SIZE, {
                 lower: 1,
                 upper: 20,
@@ -372,7 +376,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         // results rows
         let results_rows = page.addSpin(
-            'Max results rows:',
+            _("Max results rows:"),
             WIKI_RESULTS_ROWS, {
                 lower: 1,
                 upper: 10,
@@ -381,10 +385,10 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
         );
 
         // requires restart
-        page.addItem(new Gtk.Label({label: 'Requires restart shell'}));
+        page.addItem(new Gtk.Label({label: _("Requires restart shell")}));
         // result width
         page._result_width = page.addSpin(
-            'Width(px):',
+            _("Width(px):"),
             WIKI_RESULT_WIDTH, {
                 lower: 100,
                 upper: 1500,
@@ -394,7 +398,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         // result height
         page._result_height = page.addSpin(
-            'Height(px):',
+            _("Height(px):"),
             WIKI_RESULT_HEIGHT, {
                 lower: 50,
                 upper: 1500,
@@ -411,7 +415,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
     _get_keybindings_page: function() {
         let page_label = new Gtk.Label({
-            label: 'Shortcuts'
+            label: _("Shortcuts")
         });
         let page = new WikipediaPrefsGrid();
 
@@ -429,17 +433,17 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
         let shortcuts_enabled = this._settings.get_boolean(WIKI_ENABLE_SHORTCUTS);
 
         let keybindings = {};
-        keybindings[WIKI_SEARCH_FROM_CLIPBOARD] = 'Search from clipboard';
+        keybindings[WIKI_SEARCH_FROM_CLIPBOARD] = _("Search from clipboard");
         keybindings[WIKI_SEARCH_FROM_PRIMARY_SELECTION] =
-            'Search from primary selection';
+            _("Search from primary selection");
 
         let keybindings_widget = new WikipediaKeybindingsWidget(keybindings);
         keybindings_widget.set_sensitive(shortcuts_enabled);
         page.addItem(keybindings_widget)
 
         let label_text =
-            '<sup>*</sup>Search from primary selection requires ' +
-            '<a href="http://sourceforge.net/projects/xclip/">xclip</a>';
+            '<sup>*</sup>'+_("Search from primary selection requires") +
+            ' <a href="http://sourceforge.net/projects/xclip/">xclip</a>';
         page.addItem(new Gtk.Label({
             label: label_text,
             use_markup: true

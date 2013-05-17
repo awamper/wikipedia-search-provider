@@ -27,6 +27,9 @@ const WIKIPEDIA_API_URL = "/w/api.php";
 const shell_version = imports.misc.config.PACKAGE_VERSION;
 const settings = Convenience.getSettings();
 
+const Gettext = imports.gettext.domain('wikipedia_search_provider');
+const _ = Gettext.gettext;
+
 let wikipedia_language = settings.get_string(Prefs.WIKI_DEFAULT_LANGUAGE);
 
 const _httpSession = new Soup.SessionAsync();
@@ -381,8 +384,8 @@ const WikipediaProvider = new Lang.Class({
                     }
                     else {
                         let nothing_found = [{
-                            "title": "Wikipedia Search Provider",
-                            "extract": "Your search - "+term+" - did not match any documents.\nLanguage: "+wikipedia_language,
+                            "title": _("Wikipedia Search Provider"),
+                            "extract": _("Your search - ")+term+_(" - did not match any documents.\nLanguage: ")+wikipedia_language,
                             "show_icon": true
                         }]
                         this.searchSystem.pushResults(this, nothing_found);
@@ -391,8 +394,8 @@ const WikipediaProvider = new Lang.Class({
             }
             else {
                 let nothing_found = [{
-                    "title": "Wikipedia Search Provider",
-                    "extract": "Your search - "+term+" - did not match any documents.\nLanguage: "+wikipedia_language,
+                    "title": _("Wikipedia Search Provider"),
+                    "extract": _("Your search - ")+term+_(" - did not match any documents.\nLanguage: ")+wikipedia_language,
                     "show_icon": true
                 }]
                 this.searchSystem.pushResults(this, nothing_found);
@@ -411,8 +414,8 @@ const WikipediaProvider = new Lang.Class({
 
         if(query.wikipedia_query) {
             let wellcome = [{
-                "title": "Wikipedia Search Provider",
-                "extract": "Enter your query.",
+                "title": _("Wikipedia Search Provider"),
+                "extract": _("Enter your query."),
                 "show_icon": true
             }]
             this.searchSystem.pushResults(this, wellcome);
@@ -431,8 +434,8 @@ const WikipediaProvider = new Lang.Class({
                     settings.get_int(Prefs.WIKI_DELAY_TIME),
                     Lang.bind(this, function() {
                         let searching = [{
-                            "title": "Wikipedia Search Provider",
-                            "extract": "Searching for '"+query.term+"'...",
+                            "title": _("Wikipedia Search Provider"),
+                            "extract": _("Searching for ")+"'"+query.term+"'...",
                             "show_icon": true
                         }]
                         this.searchSystem.pushResults(this, searching);
@@ -533,7 +536,7 @@ const WikipediaProvider = new Lang.Class({
 });
 
 function init() {
-    // nothing
+    Convenience.initTranslations("wikipedia_search_provider");
 }
 
 let settings_connection_id = 0;
