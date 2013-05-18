@@ -1,0 +1,127 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Wikipedia Search Provider\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-05-17 18:41+0200\n"
+"PO-Revision-Date: 2013-05-18 11:20+0700\n"
+"Last-Translator: awamper <awamper@gmail.com>\n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: prefs.js:89
+msgid "Action"
+msgstr "Действие"
+
+#: prefs.js:107
+msgid "Can't change keybinding"
+msgstr "Не могу изменить хоткей"
+
+#: prefs.js:122
+msgid "Modify"
+msgstr "Шорткат"
+
+#: prefs.js:289
+msgid "Settings"
+msgstr "Настройки"
+
+#: prefs.js:295
+msgid "Keyword:"
+msgstr "Ключевое слово:"
+
+#: prefs.js:301
+msgid "Default language:"
+msgstr "Язык по умолчанию:"
+
+#: prefs.js:306
+msgid "Delay time(ms):"
+msgstr "Задержка в миллисекундах:"
+
+#: prefs.js:313
+msgid "Max chars:"
+msgstr "Максимум символов:"
+
+#: prefs.js:328
+msgid "Theme"
+msgstr "Цветовая схема"
+
+#: prefs.js:355
+msgid "Theme:"
+msgstr "Цветовая схема:"
+
+#: prefs.js:359
+msgid "Title font size(px):"
+msgstr "Размер текста заголовка(пиксели):"
+
+#: prefs.js:369
+msgid "Extract font size(px):"
+msgstr "Размер текста(пиксели):"
+
+#: prefs.js:379
+msgid "Max results rows:"
+msgstr "Максимум результатов поиска:"
+
+#: prefs.js:388
+msgid "Requires restart shell"
+msgstr "Необходимо перезагрузить gnome-shell"
+
+#: prefs.js:391
+msgid "Width(px):"
+msgstr "Ширина(пиксели):"
+
+#: prefs.js:401
+msgid "Height(px):"
+msgstr "Высота(пиксели):"
+
+#: prefs.js:418
+msgid "Shortcuts"
+msgstr "Горячие клавиши"
+
+#: prefs.js:436
+msgid "Search from clipboard"
+msgstr "Поиск из буфера обмена"
+
+#: prefs.js:438
+msgid "Search from primary selection"
+msgstr "Поиск из primary selection"
+
+#: prefs.js:445
+msgid "Search from primary selection requires"
+msgstr "Для поиска из primary selection нужно установить"
+
+#: extension.js:387
+#: extension.js:397
+#: extension.js:417
+#: extension.js:437
+msgid "Wikipedia Search Provider"
+msgstr ""
+
+#: extension.js:388
+#: extension.js:398
+msgid "Your search - "
+msgstr "Ваш запрос -"
+
+#: extension.js:388
+#: extension.js:398
+msgid ""
+" - did not match any documents.\n"
+"Language: "
+msgstr ""
+" - не дал результатов.\n"
+"Язык:"
+
+#: extension.js:418
+msgid "Enter your query."
+msgstr "Введите ваш запрос."
+
+#: extension.js:438
+msgid "Searching for "
+msgstr "Поиск "
+
