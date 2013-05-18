@@ -1,0 +1,120 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-05-17 18:41+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: prefs.js:89
+msgid "Action"
+msgstr ""
+
+#: prefs.js:107
+msgid "Can't change keybinding"
+msgstr ""
+
+#: prefs.js:122
+msgid "Modify"
+msgstr ""
+
+#: prefs.js:289
+msgid "Settings"
+msgstr ""
+
+#: prefs.js:295
+msgid "Keyword:"
+msgstr ""
+
+#: prefs.js:301
+msgid "Default language:"
+msgstr ""
+
+#: prefs.js:306
+msgid "Delay time(ms):"
+msgstr ""
+
+#: prefs.js:313
+msgid "Max chars:"
+msgstr ""
+
+#: prefs.js:328
+msgid "Theme"
+msgstr ""
+
+#: prefs.js:355
+msgid "Theme:"
+msgstr ""
+
+#: prefs.js:359
+msgid "Title font size(px):"
+msgstr ""
+
+#: prefs.js:369
+msgid "Extract font size(px):"
+msgstr ""
+
+#: prefs.js:379
+msgid "Max results rows:"
+msgstr ""
+
+#: prefs.js:388
+msgid "Requires restart shell"
+msgstr ""
+
+#: prefs.js:391
+msgid "Width(px):"
+msgstr ""
+
+#: prefs.js:401
+msgid "Height(px):"
+msgstr ""
+
+#: prefs.js:418
+msgid "Shortcuts"
+msgstr ""
+
+#: prefs.js:436
+msgid "Search from clipboard"
+msgstr ""
+
+#: prefs.js:438
+msgid "Search from primary selection"
+msgstr ""
+
+#: prefs.js:445
+msgid "Search from primary selection requires"
+msgstr ""
+
+#: extension.js:387 extension.js:397 extension.js:417 extension.js:437
+msgid "Wikipedia Search Provider"
+msgstr ""
+
+#: extension.js:388 extension.js:398
+msgid "Your search - "
+msgstr ""
+
+#: extension.js:388 extension.js:398
+msgid ""
+" - did not match any documents.\n"
+"Language: "
+msgstr ""
+
+#: extension.js:418
+msgid "Enter your query."
+msgstr ""
+
+#: extension.js:438
+msgid "Searching for "
+msgstr ""
