@@ -420,7 +420,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
         let page = new WikipediaPrefsGrid();
 
         let enable_shortcuts = page.addBoolean(
-            'Shortcuts:',
+            _("Shortcuts")+':',
             WIKI_ENABLE_SHORTCUTS
         );
         enable_shortcuts.connect('notify::active',
