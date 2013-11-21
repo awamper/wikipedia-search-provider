@@ -3,8 +3,7 @@
   "description": "To search in Wikipedia enter the keyword(default is 'w') and your request after a space. You can also specify a language different from the default by adding to the keyword sign '-' and the language code.\nExample 1: 'w gnome' - look for the 'gnome' in Wikipedia specified by default in the configuration of extension.\nExample 2: 'w-es gnome' - will look for the 'gnome' in the Spanish Wikipedia.\nShortcuts:\n<Super>w - to seach from clipboard\n<Super><Shift>w - to seach from primary selection(requires xclip)",
   "name": "Wikipedia Search Provider",
   "shell-version": [
-    "3.4",
-    "3.6"
+      "3.10"
   ],
   "url": "https://github.com/awamper/wikipedia-search-provider",
   "uuid": "wikipedia_search_provider@awamper.gmail.com",

@@ -1,119 +1,96 @@
-.wikipedia-grid {
-    spacing: 36px;
-    -shell-grid-horizontal-item-size: 510px;
-    -shell-grid-vertical-item-size: 170px;
+.wikipedia-results-box {
+    /* nothing */
 }
 
-.wikipedia-dark {
-    border-radius: 10px;
-    border: 1px rgba(255,255,255,0.5);
-    transition-duration: 500;
+.wikipedia-result-box {
+    transition-duration: 500ms;
+    padding: 0px 5px 10px 5px;
 }
 
-.wikipedia-dark:hover,
-.wikipedia-dark:focus {
-    background-color: rgba(0,0,0,0.5);
-    border: 1px rgba(255,255,255,1);
-    transition-duration: 500;
+.wikipedia-content-box {
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 5px 5px 10px 10px;
+    transition-duration: 300ms;
 }
 
-.wikipedia-content-dark {
-    width: 500px;
-    height: 170px;
-    border-radius: 10px;
-    padding: 8px;
+.wikipedia-content-box:hover {
+    background-color: rgba(255,255,255,0.15);
+    text-shadow: rgba(0,0,0,0.8) 0px 1px 2px;
+}
+
+.wikipedia-content-box:active {
+    background-gradient-start: rgba(255, 255, 255, .05);
+    background-gradient-end: rgba(255, 255, 255, .15);
+    background-gradient-direction: vertical;
+    border-radius: 4px;
+    box-shadow: inset 0px 1px 2px 0px rgba(0, 0, 0, 0.7);
+    transition-duration: 100ms;
+}
+
+.wikipedia-content-box-dark {
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #C2C2C2;
+    padding: 5px 5px 10px 10px;
+    transition-duration: 300ms;
+}
+
+.wikipedia-content-box-dark:hover {
     background-color: rgba(0, 0, 0, 0.7);
 }
 
-.wikipedia-icon-dark {
-    border-radius: 4px;
+.wikipedia-content-box-dark:active {
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    transition-duration: 100ms;
 }
 
-.wikipedia-details-dark {
-    color: rgb(255,255,255);
-    border-radius: 4px;
-    border: 1px rgba(255,255,255,0);
-    padding: 0px 6px 22px 10px;
+.wikipedia-extract-box {
+    padding-left: 7px;
 }
 
-.wikipedia-details-title-dark {
-    font-size: 18px;
-    padding-bottom: 8px;
+.wikipedia-title {
+    font-style: bold;
 }
 
-.wikipedia-details-extract-dark {
-    font-size: 12px;
+.wikipedia-clone-background {
+    padding: 1px;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
-/*---------------------------------*/
-
-.wikipedia-light {
-    border-radius: 10px;
-    transition-duration: 500;
+.wikipedia-clone-background-dark {
+    padding: 1px;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
-.wikipedia-light:hover,
-.wikipedia-light:focus {
-    background-color: rgba(255,255,255,0.5);
-    transition-duration: 500;
+.wikipedia-suggestion-box {
+    color: white;
+    padding: 5px;
+    /*background-color: rgba(255, 255, 255, 0.1);*/
 }
 
-.wikipedia-content-light {
-    width: 500px;
-    height: 170px;
-    border-radius: 10px;
-    padding: 8px;
-    background-color: rgba(255, 255, 255, 0.5);
+.wikipedia-suggestion-box-dark {
+    color: #C2C2C2;
+    padding: 5px;
+    /*background-color: rgba(0, 0, 0, 0.5);*/
 }
 
-.wikipedia-icon-light {
-    border-radius: 4px;
+.wikipedia-suggestion-label {
+    padding: 2px;
 }
 
-.wikipedia-details-light {
-    color: rgb(0,0,0);
-    border-radius: 4px;
-    border: 1px rgba(0,0,0,0);
-    padding: 0px 6px 22px 10px;
+.wikipedia-suggestion-button {
+    font-style: italic;
+    font-weight: bold;
+    padding: 2px;
 }
 
-.wikipedia-details-title-light {
-    font-size: 18px;
-    padding-bottom: 8px;
+.wikipedia-suggestion-button:hover {
+    color: #3465a4;
 }
 
-.wikipedia-details-extract-light {
-    font-size: 12px;
-}
-
-/* Notify Popup */
-.notify-popup-modal {
-    border-radius: 5px;
-    background-color: rgba(0.0, 0.0, 0.0, 0.7);
-
-    padding-right: 10px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    padding-top: 10px;
-}
-
-.notify-popup-box {
-    border: 1px solid rgba(245,245,245,0.2);
-}
-
-.notify-popup-icon {
-    padding-right: 5px;
-    padding-left: 5px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    icon-size: 35px;
-    color: #8d8f8a;
-}
-
-.notify-popup-label {
-    padding-right: 5px;
-    padding-left: 5px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    font-size: 35px;
+.wikipedia-suggestion-button:active {
+    color: #0D4CA3;
 }
