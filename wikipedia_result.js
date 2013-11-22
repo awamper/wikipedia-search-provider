@@ -62,24 +62,35 @@ const WikipediaResult = new Lang.Class({
         );
         this._box.add(this.title_label);
 
-        this._details = new St.BoxLayout({
-            vertical: false
+        this._details = new St.Table({
+            homogeneous: false
         });
         this._box.add(this._details, {
-            row: 1,
-            col: 0,
             x_expand: true,
             x_fill: true,
             y_expand: true,
             y_fill: true
         })
 
-        this._details.add(this.thumb.actor);
+        this._details.add(this.thumb.actor, {
+            row: 0,
+            col: 0,
+            x_expand: false,
+            y_expand: false,
+            y_fill: false,
+            x_fill: false,
+            x_align: St.Align.START,
+            y_align: St.Align.MIDDLE
+        });
         this._details.add(this.extract_box, {
+            row: 0,
+            col: 1,
             x_expand: true,
             y_expand: true,
-            x_fill: true,
-            y_fill: true
+            x_fill: false,
+            y_fill: false,
+            x_align: St.Align.START,
+            y_align: St.Align.START
         });
 
         this.actor.add(this._box, {
