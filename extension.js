@@ -46,9 +46,8 @@ const WikipediaSearchProvider = new Lang.Class({
             "key-release-event",
             Lang.bind(this, function(o, e) {
                 let symbol = e.get_key_symbol();
-                let query = this._parse_query(Main.overview._searchEntry.text);
 
-                if(symbol === Clutter.BackSpace && query.wikipedia_query) {
+                if(symbol === Clutter.BackSpace) {
                     this._block_search_trigger = true;
 
                     let wellcome = {
