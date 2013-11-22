@@ -1,4 +1,3 @@
-/*global log, global */ // <-- for jshint
 /** Credit:
  *  based off prefs.js from the gnome shell extensions repository at
  *  git.gnome.org/browse/gnome-shell-extensions
@@ -14,34 +13,34 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Params = imports.misc.params;
 
 const Me = ExtensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+const Utils = Me.imports.utils;
 let extensionPath = Me.path;
 
-// Settings
-const WIKI_THEME = 'theme';
 const WIKI_KEYWORD = 'keyword';
 const WIKI_DELAY_TIME = 'delay-time';
-const WIKI_RESULTS_ROWS = 'results-rows';
+const WIKI_MAX_RESULTS = 'max-results';
+const WIKI_MAX_RESULT_COLUMNS = 'max-result-columns';
 const WIKI_DEFAULT_LANGUAGE = 'default-language';
 const WIKI_MAX_CHARS = 'max-chars';
 const WIKI_TITLE_FONT_SIZE = 'title-font-size';
 const WIKI_EXTRACT_FONT_SIZE = 'extract-font-size';
-const WIKI_RESULT_WIDTH = 'result-width';
 const WIKI_RESULT_HEIGHT = 'result-height';
+const WIKI_RESULT_WIDTH = 'result-width';
 const WIKI_SEARCH_FROM_CLIPBOARD = 'search-from-clipboard';
 const WIKI_SEARCH_FROM_PRIMARY_SELECTION = 'search-from-primary-selection';
 const WIKI_ENABLE_SHORTCUTS = 'enable-shortcuts';
+const WIKI_SHOW_FIRST_IN_OVERVIEW = 'show-first-in-overview';
+const WIKI_ENABLE_DARK_THEME = 'enable-dark-theme';
+const WIKI_ENABLE_IMAGES = 'enable-images';
+const WIKI_IMAGE_MAX_WIDTH = 'image-max-width';
+const WIKI_IMAGE_MAX_HEIGHT = 'image-max-height';
+const WIKI_EXCLUDE_DISAMBIGUATION_PAGES = 'exclude-disambiguation-pages';
 
 const Gettext = imports.gettext.domain('wikipedia_search_provider');
 const _ = Gettext.gettext;
 
-const Themes = {
-    LIGHT: 0,
-    DARK: 1
-};
-
 function init() {
-    Convenience.initTranslations("wikipedia_search_provider");
+    Utils.initTranslations("wikipedia_search_provider");
 }
 
 const WikipediaKeybindingsWidget = new GObject.Class({
@@ -54,7 +53,7 @@ const WikipediaKeybindingsWidget = new GObject.Class({
         this.set_orientation(Gtk.Orientation.VERTICAL);
 
         this._keybindings = keybindings;
-        this._settings = Convenience.getSettings();
+        this._settings = Utils.getSettings();
 
         let scrolled_window = new Gtk.ScrolledWindow();
         scrolled_window.set_policy(
@@ -176,7 +175,7 @@ const WikipediaPrefsGrid = new GObject.Class({
         this.parent(params);
         this.margin = this.row_spacing = this.column_spacing = 10;
         this._rownum = 0;
-        this._settings = Convenience.getSettings();
+        this._settings = Utils.getSettings();
 
         Gtk.Settings.get_default().gtk_button_images = true;
     },
@@ -263,10 +262,10 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
     _init: function (params) {
         this.parent(params);
-        this._settings = Convenience.getSettings();
+        this._settings = Utils.getSettings();
 
         let main_page = this._get_main_page();
-        let theme_page = this._get_theme_page();
+        let images_page = this._get_images_page();
         let keybindings_page = this._get_keybindings_page();
 
         let notebook = new Gtk.Notebook({
@@ -278,7 +277,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
         });
 
         notebook.append_page(main_page.page, main_page.label);
-        notebook.append_page(theme_page.page, theme_page.label);
+        notebook.append_page(images_page.page, images_page.label);
         notebook.append_page(keybindings_page.page, keybindings_page.label);
 
         this.add(notebook);
@@ -286,75 +285,47 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
     _get_main_page: function() {
         let page_label = new Gtk.Label({
-            label: _("Settings")
+            label: _("Main")
         });
         let page = new WikipediaPrefsGrid();
 
-        // keyword
+        let dark_theme = page.addBoolean(
+            _("Enable dark theme:"),
+            WIKI_ENABLE_DARK_THEME
+        );
+
+        let show_first = page.addBoolean(
+            _("Show first in overview:"),
+            WIKI_SHOW_FIRST_IN_OVERVIEW
+        );
+
+        let exclude_disambig = page.addBoolean(
+            _("Exclude disambiguation pages:"),
+            WIKI_EXCLUDE_DISAMBIGUATION_PAGES
+        );
+
         let keyword = page.addEntry(
             _("Keyword:"),
             WIKI_KEYWORD
         );
 
-        // default language
         let default_language = page.addEntry(
             _("Default language:"),
             WIKI_DEFAULT_LANGUAGE
         );
 
-        // delay time
         let delay = page.addSpin(_("Delay time(ms):"), WIKI_DELAY_TIME, {
             lower: 100,
             upper: 5000,
             step_increment: 100
         });
 
-        // max chars
         let max_chars = page.addSpin(_("Max chars:"), WIKI_MAX_CHARS, {
             lower: 50,
             upper: 2000,
             step_increment: 50
         });
 
-        let result = {
-            label: page_label,
-            page: page
-        };
-        return result;
-    },
-
-    _get_theme_page: function() {
-        let page_label = new Gtk.Label({
-            label: _("Theme")
-        });
-        let page = new WikipediaPrefsGrid();
-
-        // theme
-        let item = new Gtk.ComboBoxText();
-
-        for(let theme in Themes) {
-            if(Themes.hasOwnProperty(theme)) {
-                let label =
-                    theme[0].toUpperCase() + theme.substring(1).toLowerCase();
-                item.insert(-1, Themes[theme].toString(), label);
-            }
-        }
-
-        // item.set_active_id(this._settings.get_enum(WIKI_THEME)).toString();
-        item.set_active_id(
-            this._settings.get_enum(WIKI_THEME) == 0 ? '0' : '1'
-        );
-        item.connect('changed', Lang.bind(this, function (combo) {
-            let value = parseInt(combo.get_active_id(), 10);
-
-            if (value !== undefined &&
-                this._settings.get_enum(WIKI_THEME) !== value) {
-                this._settings.set_enum(WIKI_THEME, value);
-            }
-        }));
-        page.addRow(_("Theme:"), item);
-
-        // title font size
         let title_font_size = page.addSpin(
             _("Title font size(px):"),
             WIKI_TITLE_FONT_SIZE, {
@@ -364,7 +335,6 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
             }
         );
 
-        // extract font size
         let extract_font_size = page.addSpin(
             _("Extract font size(px):"),
             WIKI_EXTRACT_FONT_SIZE, {
@@ -373,6 +343,91 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
                 step_increment: 1
             }
         );
+
+        let max_results = page.addSpin(
+            _("Max results:"),
+            WIKI_MAX_RESULTS, {
+                lower: 1,
+                upper: 20,
+                step_increment: 1
+            }
+        );
+
+        let max_result_columns = page.addSpin(
+            _("Max result columns:"),
+            WIKI_MAX_RESULT_COLUMNS, {
+                lower: 1,
+                upper: 10,
+                step_increment: 1
+            }
+        );
+
+        // page._result_width = page.addSpin(
+        //     _("Width(px) 0 - auto:"),
+        //     WIKI_RESULT_WIDTH, {
+        //         lower: 0,
+        //         upper: 2000,
+        //         step_increment: 10
+        //     }
+        // );
+
+        page._result_height = page.addSpin(
+            _("Height(px):"),
+            WIKI_RESULT_HEIGHT, {
+                lower: 100,
+                upper: 2000,
+                step_increment: 10
+            }
+        );
+
+        let result = {
+            label: page_label,
+            page: page
+        };
+        return result;
+    },
+
+    _get_images_page: function() {
+        let page_label = new Gtk.Label({
+            label: _("Images")
+        });
+        let page = new WikipediaPrefsGrid();
+
+        let enable_images = page.addBoolean(
+            _("Images")+':',
+            WIKI_ENABLE_IMAGES
+        );
+        enable_images.connect('notify::active',
+            Lang.bind(this, function(s) {
+                let active = s.get_active();
+                image_width.set_sensitive(active);
+                image_height.set_sensitive(active);
+            })
+        );
+
+        let images_enabled = this._settings.get_boolean(
+            WIKI_ENABLE_IMAGES
+        );
+
+        let image_width = page.addSpin(
+            _("Max width:"),
+            WIKI_IMAGE_MAX_WIDTH, {
+                lower: 50,
+                upper: 500,
+                step_increment: 10
+            }
+        );
+        image_width.set_sensitive(images_enabled);
+
+        let image_height = page.addSpin(
+            _("Max height:"),
+            WIKI_IMAGE_MAX_HEIGHT, {
+                lower: 30,
+                upper: 500,
+                step_increment: 10
+            }
+        );
+        image_height.set_sensitive(images_enabled);
 
         let result = {
             label: page_label,
@@ -388,7 +443,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
         let page = new WikipediaPrefsGrid();
 
         let enable_shortcuts = page.addBoolean(
-            'Shortcuts:',
+            _("Shortcuts")+':',
             WIKI_ENABLE_SHORTCUTS
         );
         enable_shortcuts.connect('notify::active',
@@ -398,10 +453,13 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
             })
         );
 
-        let shortcuts_enabled = this._settings.get_boolean(WIKI_ENABLE_SHORTCUTS);
+        let shortcuts_enabled = this._settings.get_boolean(
+            WIKI_ENABLE_SHORTCUTS
+        );
 
         let keybindings = {};
-        keybindings[WIKI_SEARCH_FROM_CLIPBOARD] = _("Search from clipboard");
+        keybindings[WIKI_SEARCH_FROM_CLIPBOARD] =
+            _("Search from clipboard");
         keybindings[WIKI_SEARCH_FROM_PRIMARY_SELECTION] =
             _("Search from primary selection");
 

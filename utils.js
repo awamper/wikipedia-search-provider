@@ -1,19 +1,58 @@
-/* -*- mode: js; js-basic-offset: 4; indent-tabs-mode: nil -*- */
-
-/*
- * Part of this file comes from gnome-shell-extensions:
- * http://git.gnome.org/browse/gnome-shell-extensions/
- * 
- */
-
-
 const Gettext = imports.gettext;
 const Gio = imports.gi.Gio;
-const Lang = imports.lang;
+const Soup = imports.gi.Soup;
 
 const Config = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
 
+const _httpSession = new Soup.SessionAsync();
+Soup.Session.prototype.add_feature.call(
+    _httpSession,
+    new Soup.ProxyResolverDefault()
+);
+_httpSession.user_agent = 'Gnome-Shell WikipediaSearchProvider';
+_httpSession.timeout = 10;
+
+const SETTINGS = getSettings();
+const WIKIPEDIA_DOMAIN = "wikipedia.org";
+const WIKIPEDIA_API_URL = "/w/api.php";
+
+function get_wikipedia_url(language, api_url, api_query_string) {
+    let result_url = '';
+    let protocol = "https://";
+
+    result_url = protocol+language+'.'+WIKIPEDIA_DOMAIN;
+
+    if(api_url) {
+        result_url += api_url;
+    }
+    if(api_query_string) {
+        result_url += '?'+api_query_string;
+    }
+
+    return result_url;
+}
+
+function is_blank(str) {
+    return (!str || /^\s*$/.test(str));
+}
+
+function starts_with(str1, str2) {
+    return str1.slice(0, str2.length) == str2;
+}
+
+function ends_with(str1, str2) {
+  return str1.slice(-str2.length) == str2;
+}
+
+function escape_html(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
 
 /**
  * initTranslations:
