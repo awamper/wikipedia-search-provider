@@ -30,7 +30,7 @@ const WikipediaSearchProvider = new Lang.Class({
         this.appInfo = Gio.app_info_get_default_for_uri_scheme("http");
         this._delay_query = '';
         this._timeout_id = 0;
-        this._display = null;
+        this.display = null;
         this._wikipedia_display = new WikipediaResults.WikipediaResults(this);
         this._wikipedia_display.connect(
             "activate",
@@ -56,7 +56,6 @@ const WikipediaSearchProvider = new Lang.Class({
                         "title": _("Wikipedia Search Provider"),
                         "extract": _("Enter your query")
                     };
-                    this.searchSystem.setResults(this, []);
                     this._wikipedia_display.remove_suggestion();
                     this._show_results([
                         new WikipediaResultStore.WikipediaResultStore(wellcome)
@@ -228,7 +227,6 @@ const WikipediaSearchProvider = new Lang.Class({
 
         this._get_wiki_extracts(term, Lang.bind(this, function(extracts) {
             if(!extracts) {
-                this.searchSystem.setResults(this, []);
                 this._show_results([
                     new WikipediaResultStore.WikipediaResultStore(nothing_found)
                 ]);
@@ -269,11 +267,9 @@ const WikipediaSearchProvider = new Lang.Class({
                     this._get_wiki_thumbs(results);
                 }
 
-                this.searchSystem.setResults(this, []);
                 this._show_results(results);
             }
             else {
-                this.searchSystem.setResults(this, []);
                 this._show_results([
                     new WikipediaResultStore.WikipediaResultStore(nothing_found)
                 ]);
@@ -282,15 +278,15 @@ const WikipediaSearchProvider = new Lang.Class({
     },
 
     _show_results: function(results) {
-        this._display.actor.remove_all_children();
+        this.display.actor.remove_all_children();
 
         if(results.length > 0) {
             let search_results = Main.overview.viewSelector._searchResults;
             search_results._statusBin.hide();
-            this._display.actor.show();
+            this.display.actor.show();
         }
         else {
-            this._display.actor.hide();
+            this.display.actor.hide();
             return;
         }
 
@@ -305,7 +301,7 @@ const WikipediaSearchProvider = new Lang.Class({
         this._wikipedia_display.set_results(result_displays);
         this._wikipedia_display.show_suggestion_if_exist();
 
-        this._display.actor.add(this._wikipedia_display.actor);
+        this.display.actor.add(this._wikipedia_display.actor);
     },
 
     _on_activate: function(object, result) {
@@ -379,7 +375,6 @@ const WikipediaSearchProvider = new Lang.Class({
                     "title": _("Wikipedia Search Provider"),
                     "extract": _("Search for '%s'").format(query.term)
                 };
-                this.searchSystem.setResults(this, []);
                 this._wikipedia_display.remove_suggestion();
                 this._show_results([
                     new WikipediaResultStore.WikipediaResultStore(status)
@@ -396,7 +391,6 @@ const WikipediaSearchProvider = new Lang.Class({
                             "title": _("Wikipedia Search Provider"),
                             "extract": description
                         };
-                        this.searchSystem.setResults(this, []);
                         this._wikipedia_display.remove_suggestion();
                         this._show_results([
                             new WikipediaResultStore.WikipediaResultStore(status)
@@ -498,12 +492,11 @@ const WikipediaSearchProvider = new Lang.Class({
     },
 
     enable: function() {
-        Main.overview.addSearchProvider(this);
         let search_results = Main.overview.viewSelector._searchResults;
-        this._display = search_results._providerDisplays[this.id];
+        search_results._searchSystem.addProvider(this);
 
         if(Utils.SETTINGS.get_boolean(Prefs.WIKI_SHOW_FIRST_IN_OVERVIEW)) {
-            search_results._content.set_child_at_index(this._display.actor, 0);
+            search_results._content.set_child_at_index(this.display.actor, 0);
         }
 
         if(Utils.SETTINGS.get_boolean(Prefs.WIKI_ENABLE_SHORTCUTS)) {
@@ -535,13 +528,13 @@ const WikipediaSearchProvider = new Lang.Class({
 
                 if(enable) {
                     search_results._content.set_child_at_index(
-                        this._display.actor,
+                        this.display.actor,
                         0
                     );
                 }
                 else {
                     search_results._content.set_child_at_index(
-                        this._display.actor,
+                        this.display.actor,
                         search_results._content.get_n_children()
                     );
                 }
