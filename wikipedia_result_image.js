@@ -85,11 +85,13 @@ const WikipediaResultImage = new Lang.Class({
     },
 
     load_image: function() {
+        let scale_factor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         let texture_cache = St.TextureCache.get_default();
         this._image_actor = texture_cache.load_uri_async(
             this.image_uri,
             this.image_width,
-            this.image_height
+            this.image_height,
+            scale_factor
         );
         this._image_actor.set_reactive(true);
         this._image_actor.connect("size-change",
