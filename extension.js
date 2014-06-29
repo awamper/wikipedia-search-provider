@@ -557,10 +557,8 @@ const WikipediaSearchProvider = new Lang.Class({
         }
 
         this.remove_keybindings();
-
-        let provider_display =
-            Main.overview.viewSelector._searchResults._providerDisplays[this.id];
-        Main.overview.removeSearchProvider(this);
+        let search_results = Main.overview.viewSelector._searchResults;
+        search_results._searchSystem._unregisterProvider(this);
     }
 });
 
