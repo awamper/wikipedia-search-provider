@@ -314,15 +314,10 @@ const WikipediaSearchProvider = new Lang.Class({
                 id
             )
 
-            try {
-                Gio.app_info_launch_default_for_uri(
-                    url,
-                    global.create_app_launch_context()
-                );
-            }
-            catch (e) {
-                Util.spawn(['gvfs-open', url])
-            }
+            Gio.app_info_launch_default_for_uri(
+                url,
+                global.create_app_launch_context(0, -1)
+            );
 
             Main.overview.toggle();
             [x, y] = result.actor.get_transformed_position();
