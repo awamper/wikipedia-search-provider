@@ -328,11 +328,15 @@ const WikipediaSearchProvider = new Lang.Class({
                 x: x,
                 y: y
             });
+            clone.set_pivot_point(0.5, 0.5);
             Main.uiGroup.add_child(clone);
+
             Tweener.addTween(clone, {
                 opacity: 0,
-                time: 1,
-                transition: 'easeOutQuad',
+                scale_x: 1.5,
+                scale_y: 1.5,
+                time: 0.5,
+                transition: 'easeInExpo',
                 onComplete: Lang.bind(this, function() {
                     clone.destroy();
                 })
