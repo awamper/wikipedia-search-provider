@@ -68,13 +68,11 @@
 .wikipedia-suggestion-box {
     color: white;
     padding: 5px;
-    /*background-color: rgba(255, 255, 255, 0.1);*/
 }
 
 .wikipedia-suggestion-box-dark {
     color: #C2C2C2;
     padding: 5px;
-    /*background-color: rgba(0, 0, 0, 0.5);*/
 }
 
 .wikipedia-suggestion-label {
@@ -93,4 +91,20 @@
 
 .wikipedia-suggestion-button:active {
     color: #0D4CA3;
+}
+
+.wikipedia-content-box {
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 5px 5px 10px 10px;
+    transition-duration: 300ms;
+}
+
+.wikipedia-status-box-dark {
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #C2C2C2;
+    padding: 5px 5px 10px 10px;
+    transition-duration: 300ms;
 }

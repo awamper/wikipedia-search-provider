@@ -9,32 +9,11 @@ const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const ExtensionUtils = imports.misc.extensionUtils;
 const Params = imports.misc.params;
 
-const Me = ExtensionUtils.getCurrentExtension();
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
-let extensionPath = Me.path;
-
-const WIKI_KEYWORD = 'keyword';
-const WIKI_DELAY_TIME = 'delay-time';
-const WIKI_MAX_RESULTS = 'max-results';
-const WIKI_MAX_RESULT_COLUMNS = 'max-result-columns';
-const WIKI_DEFAULT_LANGUAGE = 'default-language';
-const WIKI_MAX_CHARS = 'max-chars';
-const WIKI_TITLE_FONT_SIZE = 'title-font-size';
-const WIKI_EXTRACT_FONT_SIZE = 'extract-font-size';
-const WIKI_RESULT_HEIGHT = 'result-height';
-const WIKI_RESULT_WIDTH = 'result-width';
-const WIKI_SEARCH_FROM_CLIPBOARD = 'search-from-clipboard';
-const WIKI_SEARCH_FROM_PRIMARY_SELECTION = 'search-from-primary-selection';
-const WIKI_ENABLE_SHORTCUTS = 'enable-shortcuts';
-const WIKI_SHOW_FIRST_IN_OVERVIEW = 'show-first-in-overview';
-const WIKI_ENABLE_DARK_THEME = 'enable-dark-theme';
-const WIKI_ENABLE_IMAGES = 'enable-images';
-const WIKI_IMAGE_MAX_WIDTH = 'image-max-width';
-const WIKI_IMAGE_MAX_HEIGHT = 'image-max-height';
-const WIKI_EXCLUDE_DISAMBIGUATION_PAGES = 'exclude-disambiguation-pages';
+const PrefsKeys = Me.imports.prefs_keys;
 
 const Gettext = imports.gettext.domain('wikipedia_search_provider');
 const _ = Gettext.gettext;
@@ -291,36 +270,36 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         let dark_theme = page.addBoolean(
             _("Enable dark theme:"),
-            WIKI_ENABLE_DARK_THEME
+            PrefsKeys.ENABLE_DARK_THEME
         );
 
         let show_first = page.addBoolean(
             _("Show first in overview:"),
-            WIKI_SHOW_FIRST_IN_OVERVIEW
+            PrefsKeys.SHOW_FIRST_IN_OVERVIEW
         );
 
         let exclude_disambig = page.addBoolean(
             _("Exclude disambiguation pages:"),
-            WIKI_EXCLUDE_DISAMBIGUATION_PAGES
+            PrefsKeys.EXCLUDE_DISAMBIGUATION_PAGES
         );
 
         let keyword = page.addEntry(
             _("Keyword:"),
-            WIKI_KEYWORD
+            PrefsKeys.KEYWORD
         );
 
         let default_language = page.addEntry(
             _("Default language:"),
-            WIKI_DEFAULT_LANGUAGE
+            PrefsKeys.DEFAULT_LANGUAGE
         );
 
-        let delay = page.addSpin(_("Delay time(ms):"), WIKI_DELAY_TIME, {
+        let delay = page.addSpin(_("Delay time(ms):"), PrefsKeys.DELAY_TIME, {
             lower: 100,
             upper: 5000,
             step_increment: 100
         });
 
-        let max_chars = page.addSpin(_("Max chars:"), WIKI_MAX_CHARS, {
+        let max_chars = page.addSpin(_("Max chars:"), PrefsKeys.MAX_CHARS, {
             lower: 50,
             upper: 2000,
             step_increment: 50
@@ -328,7 +307,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         let title_font_size = page.addSpin(
             _("Title font size(px):"),
-            WIKI_TITLE_FONT_SIZE, {
+            PrefsKeys.TITLE_FONT_SIZE, {
                 lower: 1,
                 upper: 40,
                 step_increment: 1
@@ -337,7 +316,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         let extract_font_size = page.addSpin(
             _("Extract font size(px):"),
-            WIKI_EXTRACT_FONT_SIZE, {
+            PrefsKeys.EXTRACT_FONT_SIZE, {
                 lower: 1,
                 upper: 20,
                 step_increment: 1
@@ -346,7 +325,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         let max_results = page.addSpin(
             _("Max results:"),
-            WIKI_MAX_RESULTS, {
+            PrefsKeys.MAX_RESULTS, {
                 lower: 1,
                 upper: 20,
                 step_increment: 1
@@ -355,25 +334,16 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         let max_result_columns = page.addSpin(
             _("Max result columns:"),
-            WIKI_MAX_RESULT_COLUMNS, {
+            PrefsKeys.MAX_RESULT_COLUMNS, {
                 lower: 1,
                 upper: 10,
                 step_increment: 1
             }
         );
 
-        // page._result_width = page.addSpin(
-        //     _("Width(px) 0 - auto:"),
-        //     WIKI_RESULT_WIDTH, {
-        //         lower: 0,
-        //         upper: 2000,
-        //         step_increment: 10
-        //     }
-        // );
-
         page._result_height = page.addSpin(
             _("Height(px):"),
-            WIKI_RESULT_HEIGHT, {
+            PrefsKeys.RESULT_HEIGHT, {
                 lower: 100,
                 upper: 2000,
                 step_increment: 10
@@ -395,7 +365,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         let enable_images = page.addBoolean(
             _("Images")+':',
-            WIKI_ENABLE_IMAGES
+            PrefsKeys.ENABLE_IMAGES
         );
         enable_images.connect('notify::active',
             Lang.bind(this, function(s) {
@@ -406,12 +376,12 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
         );
 
         let images_enabled = this._settings.get_boolean(
-            WIKI_ENABLE_IMAGES
+            PrefsKeys.ENABLE_IMAGES
         );
 
         let image_width = page.addSpin(
             _("Max width:"),
-            WIKI_IMAGE_MAX_WIDTH, {
+            PrefsKeys.IMAGE_MAX_WIDTH, {
                 lower: 50,
                 upper: 500,
                 step_increment: 10
@@ -421,7 +391,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         let image_height = page.addSpin(
             _("Max height:"),
-            WIKI_IMAGE_MAX_HEIGHT, {
+            PrefsKeys.IMAGE_MAX_HEIGHT, {
                 lower: 30,
                 upper: 500,
                 step_increment: 10
@@ -444,7 +414,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
 
         let enable_shortcuts = page.addBoolean(
             _("Shortcuts")+':',
-            WIKI_ENABLE_SHORTCUTS
+            PrefsKeys.ENABLE_SHORTCUTS
         );
         enable_shortcuts.connect('notify::active',
             Lang.bind(this, function(s) {
@@ -454,13 +424,13 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
         );
 
         let shortcuts_enabled = this._settings.get_boolean(
-            WIKI_ENABLE_SHORTCUTS
+            PrefsKeys.ENABLE_SHORTCUTS
         );
 
         let keybindings = {};
-        keybindings[WIKI_SEARCH_FROM_CLIPBOARD] =
+        keybindings[PrefsKeys.SEARCH_FROM_CLIPBOARD] =
             _("Search from clipboard");
-        keybindings[WIKI_SEARCH_FROM_PRIMARY_SELECTION] =
+        keybindings[PrefsKeys.SEARCH_FROM_PRIMARY_SELECTION] =
             _("Search from primary selection");
 
         let keybindings_widget = new WikipediaKeybindingsWidget(keybindings);

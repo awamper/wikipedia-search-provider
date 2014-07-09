@@ -1,36 +1,46 @@
 const Gettext = imports.gettext;
 const Gio = imports.gi.Gio;
-const Soup = imports.gi.Soup;
-
-const Config = imports.misc.config;
+const Clutter = imports.gi.Clutter;
 const ExtensionUtils = imports.misc.extensionUtils;
 
-const _httpSession = new Soup.SessionAsync();
-Soup.Session.prototype.add_feature.call(
-    _httpSession,
-    new Soup.ProxyResolverDefault()
-);
-_httpSession.user_agent = 'Gnome-Shell WikipediaSearchProvider';
-_httpSession.timeout = 10;
+const Config = imports.misc.config;
+const Me = ExtensionUtils.getCurrentExtension();
+const PrefsKeys = Me.imports.prefs_keys;
 
 const SETTINGS = getSettings();
-const WIKIPEDIA_DOMAIN = "wikipedia.org";
-const WIKIPEDIA_API_URL = "/w/api.php";
 
-function get_wikipedia_url(language, api_url, api_query_string) {
-    let result_url = '';
-    let protocol = "https://";
+function get_style_postfix() {
+    return (SETTINGS.get_boolean(
+        PrefsKeys.ENABLE_DARK_THEME
+    ) ? '-dark' : '');
+}
 
-    result_url = protocol+language+'.'+WIKIPEDIA_DOMAIN;
+function wikipedia_normalize_title(title) {
+    title = title.replace(/_+/g, ' ');
+    title = title.replace(/ +/g, ' ');
+    title = title.charAt(0).toUpperCase() + title.slice(1);
+    title = title.trim();
+    return title;
+}
 
-    if(api_url) {
-        result_url += api_url;
+function is_empty_entry(entry) {
+    if(is_blank(entry.text) || entry.text === entry.hint_text) {
+        return true
     }
-    if(api_query_string) {
-        result_url += '?'+api_query_string;
+    else {
+        return false;
     }
+}
 
-    return result_url;
+function get_unichar(keyval) {
+    let ch = Clutter.keysym_to_unicode(keyval);
+
+    if(ch) {
+        return String.fromCharCode(ch);
+    }
+    else {
+        return false;
+    }
 }
 
 function is_blank(str) {
@@ -108,8 +118,10 @@ function getSettings(schema) {
 
     let schemaObj = schemaSource.lookup(schema, true);
     if (!schemaObj)
-        throw new Error('Schema ' + schema + ' could not be found for extension '
-                        + extension.metadata.uuid + '. Please check your installation.');
+        throw new Error(
+            'Schema ' + schema + ' could not be found for extension ' +
+             extension.metadata.uuid + '. Please check your installation.'
+        );
 
     return new Gio.Settings({ settings_schema: schemaObj });
 }

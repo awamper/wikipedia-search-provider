@@ -2,9 +2,8 @@ const St = imports.gi.St;
 const Lang = imports.lang;
 const Tweener = imports.ui.tweener;
 const Signals = imports.signals;
-const ExtensionUtils = imports.misc.extensionUtils;
 
-const Me = ExtensionUtils.getCurrentExtension();
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const Prefs = Me.imports.prefs;
 
@@ -14,13 +13,9 @@ const WikipediaSearchSuggestion = new Lang.Class({
     Name: "WikipediaSearchSuggestion",
 
     _init: function() {
-        let style_postfix = Utils.SETTINGS.get_boolean(
-            Prefs.WIKI_ENABLE_DARK_THEME
-        ) ? '-dark' : '';
-
         this.actor = new St.BoxLayout({
             visible: false,
-            style_class: 'wikipedia-suggestion-box' + style_postfix
+            style_class: 'wikipedia-suggestion-box' + Utils.get_style_postfix()
         });
 
         this._label = new St.Label({
@@ -63,6 +58,10 @@ const WikipediaSearchSuggestion = new Lang.Class({
                 this.actor.hide();
             })
         })
+    },
+
+    destroy: function() {
+        this.actor.destroy();
     },
 
     set label(text) {

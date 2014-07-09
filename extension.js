@@ -5,438 +5,278 @@ const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const Gio = imports.gi.Gio;
 const Mainloop = imports.mainloop;
-const Soup = imports.gi.Soup;
 const Tweener = imports.ui.tweener;
 const Clutter = imports.gi.Clutter;
-const ExtensionUtils = imports.misc.extensionUtils;
 
-const Me = ExtensionUtils.getCurrentExtension();
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
-const Prefs = Me.imports.prefs;
-const WikipediaResult = Me.imports.wikipedia_result;
-const WikipediaResults = Me.imports.wikipedia_results;
-const WikipediaResultStore = Me.imports.wikipedia_result_store;
+const PrefsKeys = Me.imports.prefs_keys;
+const WikipediaPage = Me.imports.wikipedia_page;
+const WikipediaClient = Me.imports.wikipedia_client;
+const WikipediaResultView = Me.imports.wikipedia_result_view;
+const WikipediaResultsView = Me.imports.wikipedia_results_view;
 
 const Gettext = imports.gettext.domain('wikipedia_search_provider');
 const _ = Gettext.gettext;
 
-const CONNECTION_IDS = {};
+const CONNECTION_IDS = {
+    SHORTCUTS: 0,
+    SHOW_FIRST: 0,
+    KEY_RELEASE: 0,
+    TEXT_CHANGED: 0
+};
+const TIMEOUT_IDS = {
+    SEARCH: 0
+}
 
 const WikipediaSearchProvider = new Lang.Class({
     Name: "WikipediaSearchProvider",
 
     _init: function() {
-        this.id = "Wikipedia";
-        this.appInfo = Gio.app_info_get_default_for_uri_scheme("http");
-        this._delay_query = '';
-        this._timeout_id = 0;
-        this.display = null;
-        this._wikipedia_display = new WikipediaResults.WikipediaResults(this);
+        this._overview_search_results = Main.overview.viewSelector._searchResults;
+
+        this._wikipedia_display =
+            new WikipediaResultsView.WikipediaResultsView(this);
         this._wikipedia_display.connect(
             "activate",
             Lang.bind(this, this._on_activate)
         );
         this._wikipedia_language = Utils.SETTINGS.get_string(
-            Prefs.WIKI_DEFAULT_LANGUAGE
+            PrefsKeys.DEFAULT_LANGUAGE
         );
-
+        this._wikipedia_client = new WikipediaClient.WikipediaClient();
         this._block_search_trigger = false;
 
-        Main.overview._searchEntry.clutter_text.connect(
-            "key-release-event",
-            Lang.bind(this, function(o, e) {
-                let symbol = e.get_key_symbol();
-                let query = this._parse_query(Main.overview._searchEntry.text);
+        CONNECTION_IDS.KEY_RELEASE =
+            Main.overview._searchEntry.clutter_text.connect(
+                "key-release-event",
+                Lang.bind(this, this._on_key_release)
+            );
+        CONNECTION_IDS.TEXT_CHANGED =
+            Main.overview._searchEntry.clutter_text.connect(
+                "text-changed",
+                Lang.bind(this, this._on_text_changed)
+            );
+    },
 
-                if(symbol === Clutter.BackSpace && query.wikipedia_query) {
-                    this._block_search_trigger = true;
+    _on_key_release: function(object, event) {
+        let symbol = event.get_key_symbol();
+        let entry = Main.overview._searchEntry;
+        let query = this._parse_query(entry.text);
+        let ch = Utils.get_unichar(symbol);
 
-                    let wellcome = {
-                        "pageid": 0,
-                        "title": _("Wikipedia Search Provider"),
-                        "extract": _("Enter your query")
-                    };
-                    this._wikipedia_display.remove_suggestion();
-                    this._show_results([
-                        new WikipediaResultStore.WikipediaResultStore(wellcome)
-                    ]);
-                }
-            })
-        );
+        if(symbol === Clutter.BackSpace && query.wikipedia_query) {
+            this._block_search_trigger = true;
+            this._wikipedia_display.remove_suggestion();
+            this._wikipedia_display.show_message(_("Enter your query"));
+        }
+        else if(ch) {
+            if(query.lang) {
+                this._wikipedia_language = query.lang;
+            }
+            else {
+                this._wikipedia_language = Utils.SETTINGS.get_string(
+                    PrefsKeys.DEFAULT_LANGUAGE
+                );
+            }
+
+            this._start_search(query.term, this._wikipedia_language);
+        }
+    },
+
+    _on_text_changed: function() {
+        if(Utils.is_empty_entry(Main.overview._searchEntry)) {
+            this._wikipedia_display.clear();
+            this._wikipedia_display.hide();
+        }
     },
 
     _parse_query: function(terms_string) {
-        let keyword = Utils.SETTINGS.get_string(Prefs.WIKI_KEYWORD);
+        let keyword = Utils.SETTINGS.get_string(PrefsKeys.KEYWORD);
         let regexp_string = "(%s|%s-(.*?)) (.*)".format(keyword, keyword);
         let wikipedia_query_regexp = new RegExp(regexp_string);
-        let result = {};
-        result.lang = '';
-        result.wikipedia_query = false;
+        let result = {
+            lang: '',
+            wikipedia_query: false,
+            term: ''
+        };
+        if(!wikipedia_query_regexp.test(terms_string)) return result;
 
-        if(wikipedia_query_regexp.test(terms_string)) {
-            result.wikipedia_query = true;
-            let matches = wikipedia_query_regexp.exec(terms_string);
-            let language = matches[2];
-            let term = matches[3];
-
-            if(!Utils.is_blank(language)) {
-                result.lang = language.trim();
-            }
-            if(!Utils.is_blank(term)) {
-                result.term = term.trim();
-            }
-        }
+        result.wikipedia_query = true;
+        let matches = wikipedia_query_regexp.exec(terms_string);
+        let language = matches[2];
+        let term = matches[3];
+        if(!Utils.is_blank(language)) result.lang = language.trim();
+        if(!Utils.is_blank(term)) result.term = term.trim();
 
         return result;
     },
 
-    _get_wiki_thumbs: function(results) {
-        let results_by_image_name = {};
-
-        for(let i = 0; i < results.length; i++) {
-            if(results[i].has_image_name) {
-                let image_name = "File:" + results[i].image_name;
-                results_by_image_name[image_name] = results[i];
-            }
-        }
-
-        if(Object.keys(results_by_image_name).length < 1) return;
-
-        let api_query =
-            "action=query&prop=imageinfo&format=json&iiprop=url" +
-            "&iilimit=1&iiurlwidth=%s&iiurlheight=%s&iwurl=&redirects=".format(
-                // Utils.SETTINGS.get_int(Prefs.WIKI_IMAGE_MAX_WIDTH),
-                // Utils.SETTINGS.get_int(Prefs.WIKI_IMAGE_MAX_HEIGHT)
-                500,
-                500
-            ) +
-            "&titles=%s".format(
-                encodeURIComponent(Object.keys(results_by_image_name).join("|"))
-            );
-
-        let url = Utils.get_wikipedia_url(
-            this._wikipedia_language,
-            Utils.WIKIPEDIA_API_URL,
-            api_query
-        );
-        let request = Soup.Message.new('GET', url);
-
-        Utils._httpSession.queue_message(request,
-            Lang.bind(this, function(http_session, message) {
-                if(message.status_code === 200) {
-                    let result = JSON.parse(request.response_body.data);
-                    let pages = result.query.pages;
-                    let normalized = result.query.normalized;
-
-                    if(normalized !== undefined) {
-                        for(let i = 0; i < normalized.length; i++) {
-                            results_by_image_name[normalized[i].to] =
-                                results_by_image_name[normalized[i].from];
-                            delete results_by_image_name[normalized[i].from];
-                        }
-                    }
-
-                    for(let key in pages) {
-                        let image_name = pages[key].title;
-                        let image_info = pages[key].imageinfo[0];
-                        let thumb_info = {
-                            url: image_info.thumburl,
-                            width: image_info.thumbwidth,
-                            height: image_info.thumbheight
-                        };
-                        let image_url = image_info.url;
-                        results_by_image_name[image_name].image_url = image_url;
-                        results_by_image_name[image_name].thumb_info = thumb_info;
-                    }
-                }
-            })
-        );
-    },
-
-    _get_wiki_extracts: function(term, callback) {
-        if(Utils.is_blank(term)) {
-            callback(false);
-            return;
-        }
-
-        term = encodeURIComponent(term);
-        let exlimit = Utils.SETTINGS.get_int(Prefs.WIKI_MAX_RESULTS);
-        let max_chars = Utils.SETTINGS.get_int(Prefs.WIKI_MAX_CHARS);
-        let limit = Utils.SETTINGS.get_int(Prefs.WIKI_MAX_RESULTS);
-        let api_query =
-            "action=query&prop=extracts|pageprops&format=json&exlimit=%s" +
-            "&explaintext=&exsectionformat=plain&exchars=%s&exintro=" +
-            "&redirects=&generator=search&gsrsearch=%s&gsrnamespace=0" +
-            "&gsrprop=size&gsrinfo=suggestion&gsrlimit=%s";
-        api_query = api_query.format(exlimit, max_chars, term, limit);
-        let url = Utils.get_wikipedia_url(
-            this._wikipedia_language,
-            Utils.WIKIPEDIA_API_URL,
-            api_query
-        );
-        let request = Soup.Message.new('GET', url);
-
-        Utils._httpSession.queue_message(request,
-            Lang.bind(this, function(http_session, message) {
-                if(message.status_code === 200) {
-                    let result = JSON.parse(request.response_body.data);
-
-                    if(!result.query) {
-                        callback(false);
-                        return;
-                    }
-
-                    let pages = result.query.pages;
-                    let searchinfo = result.query.searchinfo;
-
-                    if(searchinfo !== undefined) {
-                        if(!Utils.is_blank(searchinfo.suggestion)) {
-                            this._wikipedia_display.set_suggestion(
-                                searchinfo.suggestion
-                            );
-                        }
-                        else {
-                            this._wikipedia_display.remove_suggestion();
-                        }
-                    }
-                    else {
-                        this._wikipedia_display.remove_suggestion();
-                    }
-
-                    callback(pages);
-                }
-                else {
-                    log("_get_wiki_extracts: Error code: %s".format(
-                        message.status_code
-                    ));
-                    callback(false);
-                }
-            })
-        );
-    },
-
     _search: function(term) {
-        let nothing_found = {
-            "pageid": 0,
-            "title": _("Wikipedia Search Provider"),
-            "extract":
-                _("Your search - ") + term +
-                _(" - did not match any documents.\nLanguage: ") +
-                this._wikipedia_language
-        };
-
-        this._get_wiki_extracts(term, Lang.bind(this, function(extracts) {
-            if(!extracts) {
-                this._show_results([
-                    new WikipediaResultStore.WikipediaResultStore(nothing_found)
-                ]);
+        function on_search_result(error, result) {
+            if(error || !result.query) {
+                if(error) log(error);
+                this._wikipedia_display.show_message(nothing_found_msg);
                 return;
             }
 
-            let results = [];
-
-            for(let id in extracts) {
-                let result;
-                let pageprops = extracts[id].pageprops;
-                
-                if(pageprops) {
-                    let exclude_disambig_page =
-                        Utils.SETTINGS.get_boolean(
-                            Prefs.WIKI_EXCLUDE_DISAMBIGUATION_PAGES
-                        )
-                        && pageprops.disambiguation !== undefined;
-
-                    if(exclude_disambig_page) continue;
-                }
-
-                try {
-                    result = new WikipediaResultStore.WikipediaResultStore(
-                        extracts[id]
+            if(result.query.searchinfo !== undefined) {
+                if(!Utils.is_blank(result.query.searchinfo.suggestion)) {
+                    this._wikipedia_display.set_suggestion(
+                        result.query.searchinfo.suggestion
                     );
-                    result.language_code = this._wikipedia_language;
-                    results.push(result);
                 }
-                catch(e) {
-                    log(e);
-                    continue;
+                else {
+                    this._wikipedia_display.remove_suggestion();
                 }
-            }
-
-            if(results.length > 0) {
-                if(Utils.SETTINGS.get_boolean(Prefs.WIKI_ENABLE_IMAGES)) {
-                    this._get_wiki_thumbs(results);
-                }
-
-                this._show_results(results);
             }
             else {
-                this._show_results([
-                    new WikipediaResultStore.WikipediaResultStore(nothing_found)
-                ]);
+                this._wikipedia_display.remove_suggestion();
             }
-        }));
+
+            let n_results = Object.keys(result.query.pages).length;
+            let n_pages_ready = 0;
+            let results = [];
+
+            for each(let page_data in result.query.pages) {
+                let wikipedia_page = new WikipediaPage.WikipediaPage();
+                wikipedia_page.lang = this._wikipedia_language;
+                wikipedia_page.connect('data-loaded',
+                    Lang.bind(this, function() {
+                        n_pages_ready++;
+                        let exclude_page =
+                            Utils.SETTINGS.get_boolean(
+                                PrefsKeys.EXCLUDE_DISAMBIGUATION_PAGES
+                            )
+                            && wikipedia_page.properties.disambiguation;
+
+                        if(!exclude_page && wikipedia_page.exists) {
+                            results.push(wikipedia_page);
+                        }
+
+                        if(n_pages_ready >= n_results) {
+                            if(results.length > 0) {
+                                this._show_results(results);
+                            }
+                            else {
+                                this._wikipedia_display.show_message(
+                                    nothing_found_msg
+                                );
+                            }
+                        }
+                    })
+                );
+                wikipedia_page.load_data(page_data);
+            }
+        }
+
+        let nothing_found_msg =
+            _("Your search - ") + term +
+            _(" - did not match any documents.\nLanguage: ") +
+            this._wikipedia_language;
+        let max_chars = Utils.SETTINGS.get_int(PrefsKeys.MAX_CHARS);
+        let limit = Utils.SETTINGS.get_int(PrefsKeys.MAX_RESULTS);
+        let actions = {
+            action: 'query',
+            prop: 'extracts|pageprops|images',
+            exlimit: limit,
+            explaintext: '',
+            exsectionformat: 'plain',
+            exchars: max_chars,
+            exintro: '',
+            redirects: '',
+            imlimit: 100,
+            generator: 'search',
+            gsrsearch: term,
+            gsrnamespace: 0,
+            gsrprop: 'score',
+            gsrinfo: 'suggestion',
+            gsrlimit: limit
+        };
+        this._wikipedia_client.get(actions, Lang.bind(this, on_search_result));
+    },
+
+    _start_search: function(term, lang) {
+        if(TIMEOUT_IDS.SEARCH > 0) {
+            Mainloop.source_remove(TIMEOUT_IDS.SEARCH);
+            TIMEOUT_IDS.SEARCH = 0;
+        }
+        if(Utils.is_blank(term)) return;
+
+        this._results = [];
+        this._wikipedia_display.remove_suggestion();
+        this._wikipedia_display.show_message(_("Search for '%s'").format(term));
+
+        TIMEOUT_IDS.SEARCH = Mainloop.timeout_add(
+            Utils.SETTINGS.get_int(PrefsKeys.DELAY_TIME),
+            Lang.bind(this, function() {
+                let message = _("Searching for ") + "'" + term + "'...";
+                this._wikipedia_display.show_message(message);
+
+                this._wikipedia_client.lang = lang;
+                this._search(term);
+            })
+        );
     },
 
     _show_results: function(results) {
-        this.display.actor.remove_all_children();
-
-        if(results.length > 0) {
-            let search_results = Main.overview.viewSelector._searchResults;
-            search_results._statusBin.hide();
-            this.display.actor.show();
-        }
-        else {
-            this.display.actor.hide();
+        if(!results.length) {
+            this._wikipedia_display.hide();
             return;
         }
 
+        this._overview_search_results._statusBin.hide();
+        this._wikipedia_display.show();
         let result_displays = [];
 
         for(let i = 0; i < results.length; i++) {
-            let display = new WikipediaResult.WikipediaResult(results[i]);
+            let display = new WikipediaResultView.WikipediaResultView(results[i]);
             result_displays.push(display);
         }
 
-        this._wikipedia_display.clear();
         this._wikipedia_display.set_results(result_displays);
         this._wikipedia_display.show_suggestion_if_exist();
-
-        this.display.actor.add(this._wikipedia_display.actor);
     },
 
-    _on_activate: function(object, result) {
-        let id = parseInt(result.store.id);
+    _on_activate: function(object, wikipedia_result_view) {
+        let id = parseInt(wikipedia_result_view.wikipedia_page.id);
+        if(!id) return;
 
-        if(id > 0) {
-            let url = 'https://%s.%s?curid=%s'.format(
-                this._wikipedia_language,
-                Utils.WIKIPEDIA_DOMAIN,
-                id
-            )
-
-            Gio.app_info_launch_default_for_uri(
-                url,
-                global.create_app_launch_context(0, -1)
-            );
-
-            Main.overview.toggle();
-            [x, y] = result.actor.get_transformed_position();
-            let clone = new Clutter.Clone({
-                source: result.actor,
-                width: result.actor.width,
-                height: result.actor.height,
-                x: x,
-                y: y
-            });
-            clone.set_pivot_point(0.5, 0.5);
-            Main.uiGroup.add_child(clone);
-
-            Tweener.addTween(clone, {
-                opacity: 0,
-                scale_x: 1.5,
-                scale_y: 1.5,
-                time: 0.5,
-                transition: 'easeInExpo',
-                onComplete: Lang.bind(this, function() {
-                    clone.destroy();
-                })
-            });
-        }
+        Gio.app_info_launch_default_for_uri(
+            this._wikipedia_client.get_url_for_page_id(id),
+            global.create_app_launch_context(0, -1)
+        );
+        this._animate_activation(wikipedia_result_view);
     },
 
-    getInitialResultSet: function(terms) {
-        if(this._timeout_id > 0) {
-            Mainloop.source_remove(this._timeout_id);
-            this._timeout_id = 0;
-        }
+    _animate_activation: function(wikipedia_result_view) {
+        Main.overview.toggle();
+        [x, y] = wikipedia_result_view.actor.get_transformed_position();
+        let clone = new Clutter.Clone({
+            source: wikipedia_result_view.actor,
+            width: wikipedia_result_view.actor.width,
+            height: wikipedia_result_view.actor.height,
+            x: x,
+            y: y
+        });
+        clone.set_pivot_point(0.5, 0.5);
+        Main.uiGroup.add_child(clone);
 
-        if(this._block_search_trigger) {
-            this._block_search_trigger = false;
-            return;
-        }
-
-        this._results = [];
-        let terms_string = terms.join(" ");
-        let query = this._parse_query(terms_string);
-
-        if(query.wikipedia_query) {
-            if(!Utils.is_blank(query.term)) {
-                if(query.lang.length > 0) {
-                    this._wikipedia_language = query.lang;
-                }
-                else {
-                    this._wikipedia_language =
-                        Utils.SETTINGS.get_string(Prefs.WIKI_DEFAULT_LANGUAGE);
-                }
-
-                let status = {
-                    "pageid": 0,
-                    "title": _("Wikipedia Search Provider"),
-                    "extract": _("Search for '%s'").format(query.term)
-                };
-                this._wikipedia_display.remove_suggestion();
-                this._show_results([
-                    new WikipediaResultStore.WikipediaResultStore(status)
-                ]);
-
-                this._delay_query = query.term;
-                this._timeout_id = Mainloop.timeout_add(
-                    Utils.SETTINGS.get_int(Prefs.WIKI_DELAY_TIME),
-                    Lang.bind(this, function() {
-                        let description =
-                            _("Searching for ") + "'" + query.term + "'...";
-                        status = {
-                            "pageid": 0,
-                            "title": _("Wikipedia Search Provider"),
-                            "extract": description
-                        };
-                        this._wikipedia_display.remove_suggestion();
-                        this._show_results([
-                            new WikipediaResultStore.WikipediaResultStore(status)
-                        ]);
-                        this._search(this._delay_query);
-                    })
-                );
-            }
-        }
-    },
-
-    getSubsearchResultSet: function(prevResults, terms) {
-        return this.getInitialResultSet(terms);
-    },
-
-    getResultMetas: function(result, callback) {
-        let metas = [];
-
-        for(let i = 0; i < result.length; i++) {
-            metas.push({
-                'id' : result[i].id,
-                'description' : '',
-                'name' : '',
-                'createIcon': Lang.bind(this, function() {
-                    return false
-                })
-            });
-        }
-
-        callback(metas);
-    },
-
-    filterResults: function(results, max) {
-        return results;
-    },
-
-    activateResult: function(result_id) {
-        // nothing
-    },
-
-    launchSearch: function(terms) {
-        // nothing
+        Tweener.addTween(clone, {
+            opacity: 0,
+            scale_x: 1.5,
+            scale_y: 1.5,
+            time: 0.5,
+            transition: 'easeInExpo',
+            onComplete: Lang.bind(this, function() {
+                clone.destroy();
+            })
+        });
     },
 
     add_keybindings: function() {
         Main.wm.addKeybinding(
-            Prefs.WIKI_SEARCH_FROM_CLIPBOARD,
+            PrefsKeys.SEARCH_FROM_CLIPBOARD,
             Utils.SETTINGS,
             Meta.KeyBindingFlags.NONE,
             Shell.KeyBindingMode.NORMAL |
@@ -447,7 +287,7 @@ const WikipediaSearchProvider = new Lang.Class({
             })
         );
         Main.wm.addKeybinding(
-            Prefs.WIKI_SEARCH_FROM_PRIMARY_SELECTION,
+            PrefsKeys.SEARCH_FROM_PRIMARY_SELECTION,
             Utils.SETTINGS,
             Meta.KeyBindingFlags.NONE,
             Shell.KeyBindingMode.NORMAL |
@@ -460,8 +300,8 @@ const WikipediaSearchProvider = new Lang.Class({
     },
 
     remove_keybindings: function() {
-        Main.wm.removeKeybinding(Prefs.WIKI_SEARCH_FROM_CLIPBOARD);
-        Main.wm.removeKeybinding(Prefs.WIKI_SEARCH_FROM_PRIMARY_SELECTION);
+        Main.wm.removeKeybinding(PrefsKeys.SEARCH_FROM_CLIPBOARD);
+        Main.wm.removeKeybinding(PrefsKeys.SEARCH_FROM_PRIMARY_SELECTION);
     },
 
     search_from_clipborad: function(clipboard_type) {
@@ -479,37 +319,36 @@ const WikipediaSearchProvider = new Lang.Class({
     },
 
     run_wiki_search: function(text, language) {
-        let keyword = Utils.SETTINGS.get_string(Prefs.WIKI_KEYWORD);
+        let keyword = Utils.SETTINGS.get_string(PrefsKeys.KEYWORD);
         let search_text = keyword;
-
         if(!Utils.is_blank(language)) search_text += '-' + language;
-        
         search_text += ' ' + text;
 
         Main.overview.show();
         Main.overview._searchEntry.set_text(search_text);
+        this._start_search(text, language);
     },
 
     enable: function() {
-        let search_results = Main.overview.viewSelector._searchResults;
-        search_results._searchSystem.addProvider(this);
-
-        if(Utils.SETTINGS.get_boolean(Prefs.WIKI_SHOW_FIRST_IN_OVERVIEW)) {
-            search_results._content.set_child_at_index(this.display.actor, 0);
+        if(Utils.SETTINGS.get_boolean(PrefsKeys.SHOW_FIRST_IN_OVERVIEW)) {
+            this._overview_search_results._content.insert_child_at_index(
+                this._wikipedia_display.actor,
+                0
+            );
         }
 
-        if(Utils.SETTINGS.get_boolean(Prefs.WIKI_ENABLE_SHORTCUTS)) {
+        if(Utils.SETTINGS.get_boolean(PrefsKeys.ENABLE_SHORTCUTS)) {
             this.add_keybindings();
         }
 
-        CONNECTION_IDS.shortcuts = Utils.SETTINGS.connect(
-            'changed::'+Prefs.WIKI_ENABLE_SHORTCUTS,
+        CONNECTION_IDS.SHORTCUTS = Utils.SETTINGS.connect(
+            'changed::' + PrefsKeys.WIKI_ENABLE_SHORTCUTS,
             Lang.bind(this, function() {
                 let enable = Utils.SETTINGS.get_boolean(
-                    Prefs.WIKI_ENABLE_SHORTCUTS
+                    PrefsKeys.WIKI_ENABLE_SHORTCUTS
                 );
 
-                if(Utils.SETTINGS.get_boolean(Prefs.WIKI_ENABLE_SHORTCUTS)) {
+                if(Utils.SETTINGS.get_boolean(PrefsKeys.ENABLE_SHORTCUTS)) {
                     this.add_keybindings();
                 }
                 else {
@@ -517,24 +356,23 @@ const WikipediaSearchProvider = new Lang.Class({
                 }
             })
         );
-        CONNECTION_IDS.show_first = Utils.SETTINGS.connect(
-            'changed::'+Prefs.WIKI_SHOW_FIRST_IN_OVERVIEW,
+        CONNECTION_IDS.SHOW_FIRST = Utils.SETTINGS.connect(
+            'changed::' + PrefsKeys.SHOW_FIRST_IN_OVERVIEW,
             Lang.bind(this, function() {
                 let enable = Utils.SETTINGS.get_boolean(
-                    Prefs.WIKI_SHOW_FIRST_IN_OVERVIEW
+                    PrefsKeys.SHOW_FIRST_IN_OVERVIEW
                 );
-                let search_results = Main.overview.viewSelector._searchResults;
 
                 if(enable) {
-                    search_results._content.set_child_at_index(
-                        this.display.actor,
+                    this._overview_search_results._content.set_child_at_index(
+                        this._wikipedia_display.actor,
                         0
                     );
                 }
                 else {
-                    search_results._content.set_child_at_index(
-                        this.display.actor,
-                        search_results._content.get_n_children()
+                    this._overview_search_results._content.set_child_at_index(
+                        this._wikipedia_display.actor,
+                        this._overview_search_results._content.get_n_children()
                     );
                 }
             })
@@ -542,22 +380,35 @@ const WikipediaSearchProvider = new Lang.Class({
     },
 
     disable: function() {
-        if(this._timeout_id > 0) {
-            Mainloop.source_remove(this._timeout_id);
-            this._timeout_id = 0;
+        if(TIMEOUT_IDS.SEARCH > 0) {
+            Mainloop.source_remove(TIMEOUT_IDS.SEARCH);
+            TIMEOUT_IDS.SEARCH = 0;
         }
-        if(CONNECTION_IDS.shortcuts > 0) {
-            Utils.SETTINGS.disconnect(CONNECTION_IDS.shortcuts);
-            CONNECTION_IDS.shortcuts = 0;
+        if(CONNECTION_IDS.SHORTCUTS > 0) {
+            Utils.SETTINGS.disconnect(CONNECTION_IDS.SHORTCUTS);
+            CONNECTION_IDS.SHORTCUTS = 0;
         }
-        if(CONNECTION_IDS.show_first > 0) {
-            Utils.SETTINGS.disconnect(CONNECTION_IDS.show_first);
-            CONNECTION_IDS.show_first = 0;
+        if(CONNECTION_IDS.SHOW_FIRST > 0) {
+            Utils.SETTINGS.disconnect(CONNECTION_IDS.SHOW_FIRST);
+            CONNECTION_IDS.SHOW_FIRST = 0;
+        }
+        if(CONNECTION_IDS.KEY_RELEASE > 0) {
+            Main.overview._searchEntry.clutter_text.disconnect(
+                CONNECTION_IDS.KEY_RELEASE
+            );
+            CONNECTION_IDS.KEY_RELEASE = 0;
+        }
+        if(CONNECTION_IDS.TEXT_CHANGED > 0) {
+            Main.overview._searchEntry.clutter_text.disconnect(
+                CONNECTION_IDS.TEXT_CHANGED
+            );
+            CONNECTION_IDS.TEXT_CHANGED = 0;
         }
 
+        this._wikipedia_display.destroy();
+        this._wikipedia_client.destroy();
         this.remove_keybindings();
-        let search_results = Main.overview.viewSelector._searchResults;
-        search_results._searchSystem._unregisterProvider(this);
+        delete this._overview_search_results;
     }
 });
 
