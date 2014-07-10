@@ -86,9 +86,17 @@ const WikipediaSearchProvider = new Lang.Class({
 
     _on_text_changed: function() {
         if(Utils.is_empty_entry(Main.overview._searchEntry)) {
+            this._remove_timeout();
             this._wikipedia_display.clear();
             this._wikipedia_display.hide();
             this._remove_wikipedia_display();
+        }
+    },
+
+    _remove_timeout: function() {
+        if(TIMEOUT_IDS.SEARCH > 0) {
+            Mainloop.source_remove(TIMEOUT_IDS.SEARCH);
+            TIMEOUT_IDS.SEARCH = 0;
         }
     },
 
@@ -198,10 +206,7 @@ const WikipediaSearchProvider = new Lang.Class({
     },
 
     _start_search: function(term, lang) {
-        if(TIMEOUT_IDS.SEARCH > 0) {
-            Mainloop.source_remove(TIMEOUT_IDS.SEARCH);
-            TIMEOUT_IDS.SEARCH = 0;
-        }
+        this._remove_timeout();
         if(Utils.is_blank(term)) return;
 
         this._results = [];
@@ -211,6 +216,7 @@ const WikipediaSearchProvider = new Lang.Class({
         TIMEOUT_IDS.SEARCH = Mainloop.timeout_add(
             Utils.SETTINGS.get_int(PrefsKeys.DELAY_TIME),
             Lang.bind(this, function() {
+                this._remove_timeout();
                 this._insert_wikipedia_display();
                 let message = _("Searching for ") + "'" + term + "'...";
                 this._wikipedia_display.show_message(message);
@@ -384,10 +390,8 @@ const WikipediaSearchProvider = new Lang.Class({
     },
 
     disable: function() {
-        if(TIMEOUT_IDS.SEARCH > 0) {
-            Mainloop.source_remove(TIMEOUT_IDS.SEARCH);
-            TIMEOUT_IDS.SEARCH = 0;
-        }
+        this._remove_timeout();
+
         if(CONNECTION_IDS.SHORTCUTS > 0) {
             Utils.SETTINGS.disconnect(CONNECTION_IDS.SHORTCUTS);
             CONNECTION_IDS.SHORTCUTS = 0;
