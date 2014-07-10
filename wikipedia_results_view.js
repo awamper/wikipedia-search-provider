@@ -30,18 +30,7 @@ const WikipediaResultsStatus = new Lang.Class({
             y_align: St.Align.MIDDLE
         });
 
-        this._relative_actor = relative_actor;
         this._overview_search_results = Main.overview.viewSelector._searchResults;
-    },
-
-    _reposition: function() {
-        let [x, y] = this._relative_actor.get_transformed_position();
-        this.actor.x = Math.floor(
-            x + this._relative_actor.width / 2 - this.actor.width / 2
-        );
-        this.actor.y = Math.floor(
-            y + this._relative_actor.height / 2 - this.actor.height / 2
-        );
     },
 
     show_message: function(text) {
@@ -50,9 +39,6 @@ const WikipediaResultsStatus = new Lang.Class({
     },
 
     show: function() {
-        this._overview_search_results._statusBin.hide();
-        this._reposition();
-
         if(this._overview_search_results._content.contains(this.actor)) return;
         this._overview_search_results._content.insert_child_at_index(
             this.actor,
@@ -90,7 +76,7 @@ const WikipediaResultsView = new Lang.Class({
             style_class: 'search-section-separator'
         });
 
-        this._status = new WikipediaResultsStatus(this.actor);
+        this._status = new WikipediaResultsStatus();
 
         this._suggestion =
             new WikipediaSearchSuggestion.WikipediaSearchSuggestion();
@@ -191,7 +177,6 @@ const WikipediaResultsView = new Lang.Class({
     },
 
     show_message: function(text) {
-        this.clear();
         this._status.show_message(text);
     },
 
@@ -210,7 +195,6 @@ const WikipediaResultsView = new Lang.Class({
     destroy: function() {
         this.actor.destroy();
         this._status.destroy();
-        this._separator.destroy();
         this._suggestion.destroy();
     }
 });
