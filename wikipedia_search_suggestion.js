@@ -5,7 +5,6 @@ const Signals = imports.signals;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
-const Prefs = Me.imports.prefs;
 
 const ANIMATION_TIME = 0.5;
 
