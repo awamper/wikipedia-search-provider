@@ -8,53 +8,48 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const PrefsKeys = Me.imports.prefs_keys;
 const WikipediaSearchSuggestion = Me.imports.wikipedia_search_suggestion;
+const WikipediaResultView = Me.imports.wikipedia_result_view;
 
 const Gettext = imports.gettext.domain('wikipedia_search_provider');
 const _ = Gettext.gettext;
 
-const WikipediaResultsStatus = new Lang.Class({
-    Name: 'WikipediaResultsStatus',
+const MessagePage = new Lang.Class({
+    Name: 'MessagePage',
 
-    _init: function(relative_actor) {
-        this.actor = new St.BoxLayout({
-            style_class: 'wikipedia-status-box' + Utils.get_style_postfix()
-        });
+    _init: function(msg) {
+        this.id = -1;
+        this.title = 'Wikipedia Seach Provider';
+        this.extract = msg;
+        this.properties = {
+            disambiguation: null,
+            page_image: null
+        };
+        this.images = [];
+        this.page_image_name = null;
+        this.page_image = null;
+        this.exists = true;
+        this.has_main_image = false;
 
-        this._label = new St.Label();
-        this.actor.add(this._label, {
-            x_expand: true,
-            y_expand: true,
-            x_fill: true,
-            y_fill: true,
-            x_align: St.Align.MIDDLE,
-            y_align: St.Align.MIDDLE
-        });
-
-        this._overview_search_results = Main.overview.viewSelector._searchResults;
+        this.data_loaded = true;
+        this.images_loaded = true;
     },
 
-    show_message: function(text) {
-        this._label.set_text(text);
-        this.show();
-    },
-
-    show: function() {
-        if(this._overview_search_results._content.contains(this.actor)) return;
-        this._overview_search_results._content.insert_child_at_index(
-            this.actor,
-            0
-        );
-    },
-
-    hide: function() {
-        if(!this._overview_search_results._content.contains(this.actor)) return;
-        this._overview_search_results._content.remove_child(this.actor);
+    connect: function() {
+        return 0;
     },
 
     destroy: function() {
-        delete this._relative_actor;
-        delete this._overview_search_results;
-        this.actor.destroy();
+        delete this.id;
+        delete this.title;
+        delete this.extract;
+        delete this.properties;
+        delete this.images;
+        delete this.page_image_name;
+        delete this.page_image;
+        delete this.exists;
+        delete this.has_main_image;
+        delete this.data_loaded;
+        delete this.images_loaded;
     }
 });
 
@@ -75,8 +70,6 @@ const WikipediaResultsView = new Lang.Class({
         this._separator = new Separator.HorizontalSeparator({
             style_class: 'search-section-separator'
         });
-
-        this._status = new WikipediaResultsStatus();
 
         this._suggestion =
             new WikipediaSearchSuggestion.WikipediaSearchSuggestion();
@@ -117,7 +110,6 @@ const WikipediaResultsView = new Lang.Class({
     },
 
     set_results: function(results) {
-        this._status.hide();
         this.clear();
 
         let row = 1;
@@ -176,14 +168,6 @@ const WikipediaResultsView = new Lang.Class({
         this._suggestion.suggestion = text;
     },
 
-    show_message: function(text) {
-        this._status.show_message(text);
-    },
-
-    hide_message: function() {
-        this._status.hide();
-    },
-
     show: function() {
         this.actor.show();
     },
@@ -192,9 +176,16 @@ const WikipediaResultsView = new Lang.Class({
         this.actor.hide();
     },
 
+    show_message: function(message) {
+        let view = new WikipediaResultView.WikipediaResultView(
+            new MessagePage(message)
+        );
+        this.set_results([view]);
+        this.show_suggestion_if_exist();
+    },
+
     destroy: function() {
         this.actor.destroy();
-        this._status.destroy();
         this._suggestion.destroy();
     }
 });

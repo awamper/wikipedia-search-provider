@@ -68,7 +68,7 @@ const WikipediaSearchProvider = new Lang.Class({
         if(symbol === Clutter.BackSpace && query.wikipedia_query) {
             this._block_search_trigger = true;
             this._wikipedia_display.remove_suggestion();
-            this._wikipedia_display.show_message(_("Enter your query"));
+            this.show_message(_("Enter your query"));
         }
         else if(ch) {
             if(query.lang) {
@@ -125,7 +125,7 @@ const WikipediaSearchProvider = new Lang.Class({
         function on_search_result(error, result) {
             if(error || !result.query) {
                 if(error) log(error);
-                this._wikipedia_display.show_message(nothing_found_msg);
+                this.show_message(nothing_found_msg);
                 return;
             }
 
@@ -144,7 +144,7 @@ const WikipediaSearchProvider = new Lang.Class({
             }
 
             if(!result.query.pages) {
-                this._wikipedia_display.show_message(nothing_found_msg);
+                this.show_message(nothing_found_msg);
                 return;
             }
 
@@ -169,14 +169,8 @@ const WikipediaSearchProvider = new Lang.Class({
                         }
 
                         if(n_pages_ready >= n_results) {
-                            if(results.length > 0) {
-                                this._show_results(results);
-                            }
-                            else {
-                                this._wikipedia_display.show_message(
-                                    nothing_found_msg
-                                );
-                            }
+                            if(results.length > 0) this._show_results(results);
+                            else this.show_message(nothing_found_msg);
                         }
                     })
                 );
@@ -216,7 +210,7 @@ const WikipediaSearchProvider = new Lang.Class({
 
         this._results = [];
         this._wikipedia_display.remove_suggestion();
-        this._wikipedia_display.show_message(_("Search for '%s'").format(term));
+        this.show_message(_("Search for '%s'").format(term));
 
         TIMEOUT_IDS.SEARCH = Mainloop.timeout_add(
             Utils.SETTINGS.get_int(PrefsKeys.DELAY_TIME),
@@ -224,7 +218,7 @@ const WikipediaSearchProvider = new Lang.Class({
                 this._remove_timeout();
                 this._insert_wikipedia_display();
                 let message = _("Searching for ") + "'" + term + "'...";
-                this._wikipedia_display.show_message(message);
+                this.show_message(message);
 
                 this._wikipedia_client.lang = lang;
                 this._search(term);
@@ -315,6 +309,12 @@ const WikipediaSearchProvider = new Lang.Class({
                 this._wikipedia_display.actor
             );
         }
+    },
+
+    show_message: function(message) {
+        this._overview_search_results._statusBin.hide();
+        this._wikipedia_display.show();
+        this._wikipedia_display.show_message(message);
     },
 
     add_keybindings: function() {
