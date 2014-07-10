@@ -3,11 +3,11 @@ const Lang = imports.lang;
 const Main = imports.ui.main;
 const Pango = imports.gi.Pango;
 const Signals = imports.signals;
+const Clutter = imports.gi.Clutter;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const PrefsKeys = Me.imports.prefs_keys;
-const WikipediaImage = Me.imports.wikipedia_image;
 const WikipediaImageView = Me.imports.wikipedia_image_view;
 
 const WikipediaResultView = new Lang.Class({
@@ -24,6 +24,7 @@ const WikipediaResultView = new Lang.Class({
             height: Utils.SETTINGS.get_int(PrefsKeys.RESULT_HEIGHT),
             width: this._calculate_width()
         });
+        this.actor.connect('destroy', Lang.bind(this, this.destroy));
 
         this._title_label = new St.Label({
             text: this._wikipedia_page.title,
@@ -64,23 +65,16 @@ const WikipediaResultView = new Lang.Class({
             track_hover: true,
             reactive: true
         });
-        this._box.connect("button-press-event",
-            Lang.bind(this, function(o, e) {
-                let button = e.get_button();
-                o.add_style_pseudo_class("active");
-            })
+        this._box.connect(
+            'button-press-event',
+            Lang.bind(this, this._on_button_press)
         );
-        this._box.connect("button-release-event",
-            Lang.bind(this, function(o, e) {
-                let button = e.get_button();
-                o.remove_style_pseudo_class("active");
-                this.emit("clicked", button);
-            })
+        this._box.connect(
+            'button-release-event',
+            Lang.bind(this, this._on_button_release)
         );
         this._box.add(this._title_label);
         this._box.add(this._details, {
-            row: 1,
-            col: 0,
             x_expand: true,
             x_fill: true,
             y_expand: true,
@@ -90,6 +84,24 @@ const WikipediaResultView = new Lang.Class({
         this.actor.add(this._box, {
             expand: true
         });
+    },
+
+    _on_button_press: function(actor, event) {
+        let button = event.get_button();
+
+        if(button === Clutter.BUTTON_PRIMARY) {
+            actor.add_style_pseudo_class("active");
+        }
+    },
+
+    _on_button_release: function(actor, event) {
+        let button = event.get_button();
+        actor.remove_style_pseudo_class("active");
+
+        if(button === Clutter.BUTTON_PRIMARY) {
+            this.emit("clicked", button);
+            return;
+        }
     },
 
     _on_images_loaded: function() {
@@ -117,8 +129,10 @@ const WikipediaResultView = new Lang.Class({
 
         if(width <= 0) {
             let search_results = Main.overview.viewSelector._searchResults;
-            width = search_results._contentBin.width / Utils.SETTINGS.get_int(
-                PrefsKeys.MAX_RESULT_COLUMNS
+            width = Math.floor(
+                search_results._contentBin.width / Utils.SETTINGS.get_int(
+                    PrefsKeys.MAX_RESULT_COLUMNS
+                )
             );
         }
 
@@ -126,7 +140,7 @@ const WikipediaResultView = new Lang.Class({
     },
 
     destroy: function() {
-        this.actor.destroy();
+        if(this.actor) this.actor.destroy();
     },
 
     get wikipedia_page() {
