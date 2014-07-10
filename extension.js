@@ -347,7 +347,7 @@ const WikipediaSearchProvider = new Lang.Class({
         clipboard.get_text(clipboard_type,
             Lang.bind(this, function(clipboard, text) {
                 if(!Utils.is_blank(text)) {
-                    this.run_wiki_search(text);
+                    this.run_wiki_search(text, this._wikipedia_language);
                 }
                 else {
                     Main.notify('Clipboard is empty.');
@@ -357,6 +357,7 @@ const WikipediaSearchProvider = new Lang.Class({
     },
 
     run_wiki_search: function(text, language) {
+        this._wikipedia_display.clear();
         let keyword = Utils.SETTINGS.get_string(PrefsKeys.KEYWORD);
         let search_text = keyword;
         if(!Utils.is_blank(language)) search_text += '-' + language;

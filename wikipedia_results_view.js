@@ -104,7 +104,7 @@ const WikipediaResultsView = new Lang.Class({
         );
         let current_language =
             this._wikipedia_search_provider._wikipedia_language;
-        let language = '';
+        let language = default_lang;
 
         if(current_language !== default_lang) {
             language = current_language;
