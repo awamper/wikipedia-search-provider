@@ -55,12 +55,12 @@ const WikipediaClient = new Lang.Class({
 
         _get_soup_session().queue_message(request,
             Lang.bind(this, function(http_session, message) {
-                if(message.status_code !== 200) {
-                    let message =
+                if(message.status_code !== Soup.KnownStatusCode.OK) {
+                    let error_message =
                         "WikipediaClient.Client:get(): Error code: %s".format(
                             message.status_code
                         );
-                    callback(message, null);
+                    callback(error_message, null);
                     return;
                 }
 
