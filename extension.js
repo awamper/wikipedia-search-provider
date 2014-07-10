@@ -143,6 +143,11 @@ const WikipediaSearchProvider = new Lang.Class({
                 this._wikipedia_display.remove_suggestion();
             }
 
+            if(!result.query.pages) {
+                this._wikipedia_display.show_message(nothing_found_msg);
+                return;
+            }
+
             let n_results = Object.keys(result.query.pages).length;
             let n_pages_ready = 0;
             let results = [];
