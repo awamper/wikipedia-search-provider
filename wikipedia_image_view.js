@@ -4,6 +4,7 @@ const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const Clutter = imports.gi.Clutter;
 const Tweener = imports.ui.tweener;
+const Signals = imports.signals;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
@@ -15,7 +16,7 @@ const SCALE_ANIMATION_TIME = 0.5;
 const IMAGE_ENTER_TIMEOUT_TIME = 300;
 
 const CAMERA_ICON_SIZE = 80;
-const ZOOM_ICON_SIZE = 15;
+const IMAGE_MENU_ICON_SIZE = 17;
 
 const TIMEOUT_IDS = {
     THUMB_ENTER: 0
@@ -58,8 +59,8 @@ const WikipediaImageView = new Lang.Class({
 
         this._zoom_icon = new St.Icon({
             icon_name: Utils.ICONS.ZOOM_IN,
-            reactive: true,
-            icon_size: ZOOM_ICON_SIZE
+            icon_size: IMAGE_MENU_ICON_SIZE,
+            reactive: true
         });
         this._zoom_icon.connect(
             'enter-event',
@@ -69,6 +70,47 @@ const WikipediaImageView = new Lang.Class({
             'leave-event',
             Lang.bind(this, this._on_zoom_leave)
         );
+
+        this._more_images = new St.Icon({
+            icon_name: Utils.ICONS.VIEW_MORE,
+            icon_size: IMAGE_MENU_ICON_SIZE,
+            style_class: 'wikipedia-image-view-more-icon',
+            reactive: true,
+            track_hover: true
+        });
+        this._more_images.connect(
+            'button-press-event',
+            Lang.bind(this, function() {
+                return Clutter.EVENT_STOP;
+            })
+        );
+        this._more_images.connect(
+            'button-release-event',
+            Lang.bind(this, function() {
+                this.emit('show-more-images');
+                return Clutter.EVENT_STOP;
+            })
+        );
+
+        this._image_menu_box = new St.BoxLayout({
+            style_class: 'wikipedia-image-view-menu-box'
+        });
+        this._image_menu_box.add(this._zoom_icon, {
+            x_expand: true,
+            y_expand: true,
+            x_fill: false,
+            y_fill: false,
+            x_align: St.Align.END,
+            y_align: St.Align.MIDDLE
+        });
+        this._image_menu_box.add(this._more_images, {
+            x_expand: true,
+            y_expand: true,
+            x_fill: false,
+            y_fill: false,
+            x_align: St.Align.END,
+            y_align: St.Align.MIDDLE
+        });
 
         this._load_image();
 
@@ -107,6 +149,7 @@ const WikipediaImageView = new Lang.Class({
         if(this._image_actor) this._image_actor.destroy();
         if(this._image_clone) this._image_clone.destroy();
         if(this._clone_background) this._clone_background.destroy();
+        if(this._image_menu_box) this._image_menu_box.destroy();
     },
 
     _on_zoom_enter: function() {
@@ -131,10 +174,10 @@ const WikipediaImageView = new Lang.Class({
         this._hide_big_image();
     },
 
-    _show_zoom_icon: function() {
-        if(this._table.contains(this._zoom_icon)) return;
+    _show_image_menu: function() {
+        if(this._table.contains(this._image_menu_box)) return;
 
-        this._table.add(this._zoom_icon, {
+        this._table.add(this._image_menu_box, {
             row: 0,
             col: 0,
             x_expand: true,
@@ -144,14 +187,23 @@ const WikipediaImageView = new Lang.Class({
             x_align: St.Align.END,
             y_align: St.Align.END
         });
+
+        this._image_menu_box.translation_y = -(
+            this._image_actor.y - this._image_menu_box.y
+        );
     },
 
-    _hide_zoom_icon: function() {
-        if(!this._table.contains(this._zoom_icon)) return;
-        this._table.remove_child(this._zoom_icon);
+    _hide_image_menu: function() {
+        if(!this._table.contains(this._image_menu_box)) return;
+        this._table.remove_child(this._image_menu_box);
     },
 
     _show_big_image: function() {
+        if(TIMEOUT_IDS.THUMB_ENTER > 0) {
+            Mainloop.source_remove(TIMEOUT_IDS.THUMB_ENTER);
+            TIMEOUT_IDS.THUMB_ENTER = 0;
+        }
+
         let overview = Main.overview._overview;
         let small_size = this._get_small_size();
         let scale_factor = (
@@ -186,6 +238,11 @@ const WikipediaImageView = new Lang.Class({
     },
 
     _hide_big_image: function() {
+        if(TIMEOUT_IDS.THUMB_ENTER > 0) {
+            Mainloop.source_remove(TIMEOUT_IDS.THUMB_ENTER);
+            TIMEOUT_IDS.THUMB_ENTER = 0;
+        }
+
         if(this._clone_background && this._image_clone) {
             Tweener.removeTweens(this._clone_background);
             Tweener.addTween(this._clone_background, {
@@ -206,7 +263,6 @@ const WikipediaImageView = new Lang.Class({
 
     _on_image_loaded: function() {
         let small_size = this._get_small_size();
-
         this._image_actor.set_size(small_size[0], small_size[1]);
     },
 
@@ -243,7 +299,7 @@ const WikipediaImageView = new Lang.Class({
                     time: IMAGE_ANIMATION_TIME,
                     transition: 'easeOutQuad',
                     onComplete: Lang.bind(this, function() {
-                        this._show_zoom_icon();
+                        this._show_image_menu();
                     })
                 });
 
@@ -310,3 +366,4 @@ const WikipediaImageView = new Lang.Class({
         this.actor.destroy();
     }
 });
+Signals.addSignalMethods(WikipediaImageView.prototype);

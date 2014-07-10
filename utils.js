@@ -9,7 +9,8 @@ const PrefsKeys = Me.imports.prefs_keys;
 
 const ICONS = {
     ZOOM_IN: 'zoom-in-symbolic',
-    CAMERA: 'camera-photo-symbolic'
+    CAMERA: 'camera-photo-symbolic',
+    VIEW_MORE: 'view-more-symbolic'
 };
 
 const SETTINGS = getSettings();
