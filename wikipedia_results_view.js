@@ -66,6 +66,8 @@ const WikipediaResultsStatus = new Lang.Class({
     },
 
     destroy: function() {
+        delete this._relative_actor;
+        delete this._overview_search_results;
         this.actor.destroy();
     }
 });
@@ -207,7 +209,7 @@ const WikipediaResultsView = new Lang.Class({
 
     destroy: function() {
         this.actor.destroy();
-        this._message_label.destroy();
+        this._status.destroy();
         this._separator.destroy();
         this._suggestion.destroy();
     }
