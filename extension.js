@@ -88,6 +88,7 @@ const WikipediaSearchProvider = new Lang.Class({
         if(Utils.is_empty_entry(Main.overview._searchEntry)) {
             this._wikipedia_display.clear();
             this._wikipedia_display.hide();
+            this._remove_wikipedia_display();
         }
     },
 
@@ -210,6 +211,7 @@ const WikipediaSearchProvider = new Lang.Class({
         TIMEOUT_IDS.SEARCH = Mainloop.timeout_add(
             Utils.SETTINGS.get_int(PrefsKeys.DELAY_TIME),
             Lang.bind(this, function() {
+                this._insert_wikipedia_display();
                 let message = _("Searching for ") + "'" + term + "'...";
                 this._wikipedia_display.show_message(message);
 
@@ -274,6 +276,36 @@ const WikipediaSearchProvider = new Lang.Class({
         });
     },
 
+    _insert_wikipedia_display: function() {
+        let contains = this._overview_search_results._content.contains(
+            this._wikipedia_display.actor
+        );
+        if(contains) this._remove_wikipedia_display();
+
+        if(Utils.SETTINGS.get_boolean(PrefsKeys.SHOW_FIRST_IN_OVERVIEW)) {
+            this._overview_search_results._content.insert_child_at_index(
+                this._wikipedia_display.actor,
+                0
+            );
+        }
+        else {
+            this._overview_search_results._content.add_child(
+                this._wikipedia_display.actor
+            );
+        }
+    },
+
+    _remove_wikipedia_display: function() {
+        let contains = this._overview_search_results._content.contains(
+            this._wikipedia_display.actor
+        );
+        if(contains) {
+            this._overview_search_results._content.remove_child(
+                this._wikipedia_display.actor
+            );
+        }
+    },
+
     add_keybindings: function() {
         Main.wm.addKeybinding(
             PrefsKeys.SEARCH_FROM_CLIPBOARD,
@@ -330,13 +362,6 @@ const WikipediaSearchProvider = new Lang.Class({
     },
 
     enable: function() {
-        if(Utils.SETTINGS.get_boolean(PrefsKeys.SHOW_FIRST_IN_OVERVIEW)) {
-            this._overview_search_results._content.insert_child_at_index(
-                this._wikipedia_display.actor,
-                0
-            );
-        }
-
         if(Utils.SETTINGS.get_boolean(PrefsKeys.ENABLE_SHORTCUTS)) {
             this.add_keybindings();
         }
@@ -356,27 +381,6 @@ const WikipediaSearchProvider = new Lang.Class({
                 }
             })
         );
-        CONNECTION_IDS.SHOW_FIRST = Utils.SETTINGS.connect(
-            'changed::' + PrefsKeys.SHOW_FIRST_IN_OVERVIEW,
-            Lang.bind(this, function() {
-                let enable = Utils.SETTINGS.get_boolean(
-                    PrefsKeys.SHOW_FIRST_IN_OVERVIEW
-                );
-
-                if(enable) {
-                    this._overview_search_results._content.set_child_at_index(
-                        this._wikipedia_display.actor,
-                        0
-                    );
-                }
-                else {
-                    this._overview_search_results._content.set_child_at_index(
-                        this._wikipedia_display.actor,
-                        this._overview_search_results._content.get_n_children()
-                    );
-                }
-            })
-        );
     },
 
     disable: function() {
@@ -387,10 +391,6 @@ const WikipediaSearchProvider = new Lang.Class({
         if(CONNECTION_IDS.SHORTCUTS > 0) {
             Utils.SETTINGS.disconnect(CONNECTION_IDS.SHORTCUTS);
             CONNECTION_IDS.SHORTCUTS = 0;
-        }
-        if(CONNECTION_IDS.SHOW_FIRST > 0) {
-            Utils.SETTINGS.disconnect(CONNECTION_IDS.SHOW_FIRST);
-            CONNECTION_IDS.SHOW_FIRST = 0;
         }
         if(CONNECTION_IDS.KEY_RELEASE > 0) {
             Main.overview._searchEntry.clutter_text.disconnect(
