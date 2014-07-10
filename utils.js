@@ -7,6 +7,11 @@ const Config = imports.misc.config;
 const Me = ExtensionUtils.getCurrentExtension();
 const PrefsKeys = Me.imports.prefs_keys;
 
+const ICONS = {
+    ZOOM_IN: 'zoom-in-symbolic',
+    CAMERA: 'camera-photo-symbolic'
+};
+
 const SETTINGS = getSettings();
 
 function get_style_postfix() {

@@ -14,6 +14,9 @@ const SCALE_ANIMATION_TIME = 0.5;
 
 const IMAGE_ENTER_TIMEOUT_TIME = 300;
 
+const CAMERA_ICON_SIZE = 80;
+const ZOOM_ICON_SIZE = 15;
+
 const TIMEOUT_IDS = {
     THUMB_ENTER: 0
 };
@@ -32,12 +35,15 @@ const WikipediaImageView = new Lang.Class({
         this.actor = new St.BoxLayout({
             reactive: true
         });
-        this.actor.connect("destroy", Lang.bind(this, this._on_destroy));
+        this.actor.connect(
+            'destroy',
+            Lang.bind(this, this._on_destroy)
+        );
         this.actor.add_child(this._table);
 
         this._image_dummy = new St.Icon({
-            icon_name: "camera-photo-symbolic",
-            icon_size: 80
+            icon_name: Utils.ICONS.CAMERA,
+            icon_size: CAMERA_ICON_SIZE
         });
         this._table.add(this._image_dummy, {
             row: 0,
@@ -50,20 +56,27 @@ const WikipediaImageView = new Lang.Class({
             y_align: St.Align.MIDDLE
         });
 
+        this._zoom_icon = new St.Icon({
+            icon_name: Utils.ICONS.ZOOM_IN,
+            reactive: true,
+            icon_size: ZOOM_ICON_SIZE
+        });
+        this._zoom_icon.connect(
+            'enter-event',
+            Lang.bind(this, this._on_zoom_enter)
+        );
+        this._zoom_icon.connect(
+            'leave-event',
+            Lang.bind(this, this._on_zoom_leave)
+        );
+
         this._load_image();
 
         this._image_clone = null;
         this._clone_background = null;
     },
 
-    _on_destroy: function() {
-        if(this._image_dummy) this._image_dummy.destroy();
-        if(this._image_actor) this._image_actor.destroy();
-        if(this._image_clone) this._image_clone.destroy();
-        if(this._clone_background) this._clone_background.destroy();
-    },
-
-    _on_image_loaded: function() {
+    _get_small_size: function() {
         let ratio = 0;
         let small_size = [0, 0];
 
@@ -86,72 +99,115 @@ const WikipediaImageView = new Lang.Class({
             ];
         }
 
-        this._image_actor.set_size(small_size[0], small_size[1]);
-        this.actor.connect("enter-event", Lang.bind(this, function() {
-            if(TIMEOUT_IDS.THUMB_ENTER > 0) {
-                Mainloop.source_remove(TIMEOUT_IDS.THUMB_ENTER);
-                TIMEOUT_IDS.THUMB_ENTER = 0;
-            }
+        return small_size;
+    },
 
-            TIMEOUT_IDS.THUMB_ENTER = Mainloop.timeout_add(
-                IMAGE_ENTER_TIMEOUT_TIME,
-                Lang.bind(this, function() {
-                    let overview = Main.overview._overview;
-                    let scale_factor = (
-                        this._wikipedia_image.thumb_width / small_size[0]
-                    ).toFixed(2);
-                    [x, y] = this._image_actor.get_transformed_position();
-                    let pivot_x = (x / overview.width).toFixed(2);
-                    let pivot_y = (y / overview.height).toFixed(2);
+    _on_destroy: function() {
+        if(this._image_dummy) this._image_dummy.destroy();
+        if(this._image_actor) this._image_actor.destroy();
+        if(this._image_clone) this._image_clone.destroy();
+        if(this._clone_background) this._clone_background.destroy();
+    },
 
-                    this._image_clone = new Clutter.Clone({
-                        source: this._image_actor,
-                        width: this._image_actor.width,
-                        height: this._image_actor.height,
-                    });
+    _on_zoom_enter: function() {
+        if(TIMEOUT_IDS.THUMB_ENTER > 0) {
+            Mainloop.source_remove(TIMEOUT_IDS.THUMB_ENTER);
+            TIMEOUT_IDS.THUMB_ENTER = 0;
+        }
+        if(!this._image_actor) return;
 
-                    this._clone_background = this._get_clone_background();
-                    this._clone_background.opacity = 0;
-                    this._clone_background.x = x;
-                    this._clone_background.y = y;
-                    this._clone_background.set_pivot_point(pivot_x, pivot_y);
-                    this._clone_background.add_child(this._image_clone);
-                    Main.uiGroup.add_child(this._clone_background);
+        TIMEOUT_IDS.THUMB_ENTER = Mainloop.timeout_add(
+            IMAGE_ENTER_TIMEOUT_TIME,
+            Lang.bind(this, this._show_big_image)
+        );
+    },
 
-                    Tweener.removeTweens(this._clone_background);
-                    Tweener.addTween(this._clone_background, {
-                        scale_x: scale_factor,
-                        scale_y: scale_factor,
-                        opacity: 255,
-                        time: SCALE_ANIMATION_TIME,
-                        transition: 'easeOutQuad'
-                    });
+    _on_zoom_leave: function() {
+        if(TIMEOUT_IDS.THUMB_ENTER > 0) {
+            Mainloop.source_remove(TIMEOUT_IDS.THUMB_ENTER);
+            TIMEOUT_IDS.THUMB_ENTER = 0;
+        }
+
+        this._hide_big_image();
+    },
+
+    _show_zoom_icon: function() {
+        if(this._table.contains(this._zoom_icon)) return;
+
+        this._table.add(this._zoom_icon, {
+            row: 0,
+            col: 0,
+            x_expand: true,
+            y_expand: true,
+            y_fill: false,
+            x_fill: false,
+            x_align: St.Align.END,
+            y_align: St.Align.END
+        });
+    },
+
+    _hide_zoom_icon: function() {
+        if(!this._table.contains(this._zoom_icon)) return;
+        this._table.remove_child(this._zoom_icon);
+    },
+
+    _show_big_image: function() {
+        let overview = Main.overview._overview;
+        let small_size = this._get_small_size();
+        let scale_factor = (
+            this._wikipedia_image.thumb_width / small_size[0]
+        ).toFixed(2);
+        [x, y] = this._image_actor.get_transformed_position();
+        let pivot_x = (x / overview.width).toFixed(2);
+        let pivot_y = (y / overview.height).toFixed(2);
+
+        this._image_clone = new Clutter.Clone({
+            source: this._image_actor,
+            width: this._image_actor.width,
+            height: this._image_actor.height,
+        });
+
+        this._clone_background = this._get_clone_background();
+        this._clone_background.opacity = 0;
+        this._clone_background.x = x;
+        this._clone_background.y = y;
+        this._clone_background.set_pivot_point(pivot_x, pivot_y);
+        this._clone_background.add_child(this._image_clone);
+        Main.uiGroup.add_child(this._clone_background);
+
+        Tweener.removeTweens(this._clone_background);
+        Tweener.addTween(this._clone_background, {
+            scale_x: scale_factor,
+            scale_y: scale_factor,
+            opacity: 255,
+            time: SCALE_ANIMATION_TIME,
+            transition: 'easeOutQuad'
+        });
+    },
+
+    _hide_big_image: function() {
+        if(this._clone_background && this._image_clone) {
+            Tweener.removeTweens(this._clone_background);
+            Tweener.addTween(this._clone_background, {
+                scale_x: 1,
+                scale_y: 1,
+                opacity: 0,
+                time: SCALE_ANIMATION_TIME,
+                transition: 'easeOutQuad',
+                onComplete: Lang.bind(this, function() {
+                    this._image_clone.destroy();
+                    this._clone_background.destroy()
+                    this._image_clone = null;
+                    this._clone_background = null;
                 })
-            );
-        }));
-        this.actor.connect("leave-event", Lang.bind(this, function() {
-            if(TIMEOUT_IDS.THUMB_ENTER > 0) {
-                Mainloop.source_remove(TIMEOUT_IDS.THUMB_ENTER);
-                TIMEOUT_IDS.THUMB_ENTER = 0;
-            }
+            });
+        }
+    },
 
-            if(this._clone_background && this._image_clone) {
-                Tweener.removeTweens(this._clone_background);
-                Tweener.addTween(this._clone_background, {
-                    scale_x: 1,
-                    scale_y: 1,
-                    opacity: 0,
-                    time: SCALE_ANIMATION_TIME,
-                    transition: 'easeOutQuad',
-                    onComplete: Lang.bind(this, function() {
-                        this._image_clone.destroy();
-                        this._clone_background.destroy()
-                        this._image_clone = null;
-                        this._clone_background = null;
-                    })
-                });
-            }
-        }));
+    _on_image_loaded: function() {
+        let small_size = this._get_small_size();
+
+        this._image_actor.set_size(small_size[0], small_size[1]);
     },
 
     _get_clone_background: function() {
@@ -185,7 +241,10 @@ const WikipediaImageView = new Lang.Class({
                     }),
                     opacity: 255,
                     time: IMAGE_ANIMATION_TIME,
-                    transition: 'easeOutQuad'
+                    transition: 'easeOutQuad',
+                    onComplete: Lang.bind(this, function() {
+                        this._show_zoom_icon();
+                    })
                 });
 
                 Tweener.removeTweens(this._image_dummy);
@@ -244,5 +303,10 @@ const WikipediaImageView = new Lang.Class({
                 this._table.hide();
             })
         });
+    },
+
+    destroy: function() {
+        this._on_destroy();
+        this.actor.destroy();
     }
 });
