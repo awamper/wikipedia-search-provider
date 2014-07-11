@@ -172,6 +172,10 @@ const WikipediaSearchProvider = new Lang.Class({
                         }
 
                         if(n_pages_ready >= n_results) {
+                            let entry_term = this._parse_query(
+                                Main.overview._searchEntry.text
+                            ).term;
+                            if(entry_term !== term) return;
                             if(results.length > 0) this._show_results(results);
                             else this.show_message(nothing_found_msg);
                         }
