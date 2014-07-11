@@ -42,11 +42,7 @@ const WikipediaImage = new Lang.Class({
             // }
         }
 
-        if(
-            !image_data.imageinfo
-            || Utils.ends_with(image_data.title, '.svg')
-            || image_data.missing !== undefined
-        ) {
+        if(!image_data.imageinfo || Utils.ends_with(image_data.title, '.svg')) {
             this.exists = false;
             this.emit('loaded');
             return;
