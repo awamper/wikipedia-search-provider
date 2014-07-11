@@ -207,6 +207,7 @@ const WikipediaResultView = new Lang.Class({
     destroy: function() {
         if(this.actor) this.actor.destroy();
         if(this._wikipedia_image_resuls) this._wikipedia_image_resuls.destroy();
+        if(this._wikipedia_page) this._wikipedia_page.destroy();
     },
 
     get wikipedia_page() {
