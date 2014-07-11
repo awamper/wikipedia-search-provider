@@ -187,7 +187,9 @@ const WikipediaResultView = new Lang.Class({
         this._more_images_button.reactive = false;
         this._more_images_button.track_hover = false;
         this._wikipedia_image_resuls =
-            new WikipediaImageResultsView.WikipediaImageResultsView();
+            new WikipediaImageResultsView.WikipediaImageResultsView(
+                this._more_images_button
+            );
         this._wikipedia_image_resuls.set_images(image_views);
         this._wikipedia_image_resuls.connect('loaded',
             Lang.bind(this, function() {

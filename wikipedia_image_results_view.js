@@ -10,7 +10,7 @@ const WikipediaImageResultsView = new Lang.Class({
     Name: "WikipediaImageResultsView",
     Extends: PopupDialog.PopupDialog,
 
-    _init: function(wikipedia_image_views) {
+    _init: function(relative_actor) {
         this.parent({
             modal: true,
             style_class: 'wikipedia-image-results-view'
@@ -25,6 +25,18 @@ const WikipediaImageResultsView = new Lang.Class({
             x_align: St.Align.START,
             y_align: St.Align.START
         });
+
+        this._relative_actor = relative_actor;
+    },
+
+    _reposition: function() {
+        let [x, y] = [null, null];
+
+        if(this._relative_actor) {
+            [x, y] = this._relative_actor.get_transformed_position();
+        }
+
+        this.parent(x, y);
     },
 
     set_images: function(wikipedia_image_views) {

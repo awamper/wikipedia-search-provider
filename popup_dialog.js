@@ -51,8 +51,8 @@ const PopupDialog = new Lang.Class({
         this._shown = false;
     },
 
-    _reposition: function() {
-        let [x, y] = global.get_pointer();
+    _reposition: function(x, y) {
+        if(!x || !y) [x, y] = global.get_pointer();
 
         let offset_x = 0;
         let offset_y = 0;
