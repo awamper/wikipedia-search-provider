@@ -193,7 +193,8 @@ const WikipediaSearchProvider = new Lang.Class({
         let limit = Utils.SETTINGS.get_int(PrefsKeys.MAX_RESULTS);
         let actions = {
             action: 'query',
-            prop: 'extracts|pageprops|images',
+            prop: 'info|extracts|pageprops|images',
+            inprop: 'url',
             exlimit: limit,
             explaintext: '',
             exsectionformat: 'plain',
@@ -253,11 +254,11 @@ const WikipediaSearchProvider = new Lang.Class({
     },
 
     _on_activate: function(object, wikipedia_result_view) {
-        let id = parseInt(wikipedia_result_view.wikipedia_page.id);
-        if(!id) return;
+        let url = wikipedia_result_view.wikipedia_page.url;
+        if(Utils.is_blank(url)) return;
 
         Gio.app_info_launch_default_for_uri(
-            this._wikipedia_client.get_url_for_page_id(id),
+            url,
             global.create_app_launch_context(0, -1)
         );
         this._animate_activation(wikipedia_result_view);
