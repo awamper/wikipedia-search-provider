@@ -24,6 +24,7 @@ const WikipediaPage = new Lang.Class({
         this._lang = null;
         this._exists = null;
         this.has_main_image = false;
+        this.load_images = true;
 
         this._data_loaded = false;
         this._images_loaded = false;
@@ -112,7 +113,7 @@ const WikipediaPage = new Lang.Class({
         this.properties = page_data.pageprops;
         this.exists = true;
 
-        this._load_images(page_data.images);
+        if(this.load_images) this._load_images(page_data.images);
 
         this._data_loaded = true;
         this.emit('data-loaded');

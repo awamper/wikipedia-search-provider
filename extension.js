@@ -155,6 +155,9 @@ const WikipediaSearchProvider = new Lang.Class({
             for each(let page_data in result.query.pages) {
                 let wikipedia_page = new WikipediaPage.WikipediaPage();
                 wikipedia_page.lang = this._wikipedia_language;
+                wikipedia_page.load_images = Utils.SETTINGS.get_boolean(
+                    PrefsKeys.ENABLE_IMAGES
+                );
                 wikipedia_page.connect('data-loaded',
                     Lang.bind(this, function() {
                         n_pages_ready++;
