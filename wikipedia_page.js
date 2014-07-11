@@ -13,7 +13,9 @@ const WikipediaPage = new Lang.Class({
     _init: function(page_id, title) {
         this._id = null;
         this._title = null;
+        this._url = null;
         this._extract = null;
+        this._length = 0;
         this._properties = {
             disambiguation: null,
             page_image: null
@@ -115,7 +117,9 @@ const WikipediaPage = new Lang.Class({
 
         this.id = page_data.pageid;
         this.title = page_data.title;
+        this.url = page_data.fullurl;
         this.extract = page_data.extract;
+        this.length = page_data.length;
         this.properties = page_data.pageprops;
         this.exists = true;
 
@@ -132,7 +136,8 @@ const WikipediaPage = new Lang.Class({
         let limit = Utils.SETTINGS.get_int(PrefsKeys.MAX_RESULTS);
         let actions = {
             action: 'query',
-            prop: 'extracts|pageprops|images',
+            prop: 'info|extracts|pageprops|images',
+            inprop: 'url',
             exlimit: limit,
             explaintext: '',
             exsectionformat: 'plain',
@@ -161,7 +166,9 @@ const WikipediaPage = new Lang.Class({
 
         delete this._id;
         delete this._title;
+        delete this._url;
         delete this._extract;
+        delete this._length;
         delete this._properties;
         delete this._images;
         delete this._page_image_name;
@@ -187,12 +194,28 @@ const WikipediaPage = new Lang.Class({
         this._title = title;
     },
 
+    get url() {
+        return this._url;
+    },
+
+    set url(url) {
+        this._url = url;
+    },
+
     get extract() {
         return this._extract;
     },
 
     set extract(extract) {
         this._extract = extract;
+    },
+
+    get length() {
+        return this._length;
+    },
+
+    set length(length) {
+        this._length = length;
     },
 
     get properties() {
