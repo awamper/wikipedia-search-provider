@@ -54,10 +54,13 @@ const WikipediaPage = new Lang.Class({
             wikipedia_image.connect('loaded',
                 Lang.bind(this, function() {
                     n_images_loaded++;
-                    if(wikipedia_image.exists) this.images.push(wikipedia_image);
 
-                    if(wikipedia_image.title === this.page_image_name) {
-                        this.page_image = wikipedia_image;
+                    if(wikipedia_image.exists) {
+                        this.images.push(wikipedia_image);
+
+                        if(wikipedia_image.title === this.page_image_name) {
+                            this.page_image = wikipedia_image;
+                        }
                     }
 
                     if(n_images_loaded >= n_results) {
