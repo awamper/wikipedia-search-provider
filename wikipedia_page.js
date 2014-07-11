@@ -7,6 +7,8 @@ const Utils = Me.imports.utils;
 const PrefsKeys = Me.imports.prefs_keys;
 const WikipediaImage = Me.imports.wikipedia_image;
 
+const MAX_IMAGES = 20;
+
 const WikipediaPage = new Lang.Class({
     Name: 'WikipediaPage',
 
@@ -85,7 +87,7 @@ const WikipediaPage = new Lang.Class({
             iiprop: 'url',
             iwurl: '',
             redirects: '',
-            iilimit: WikipediaImage.MAX_IMAGES,
+            iilimit: MAX_IMAGES,
             iiurlwidth: WikipediaImage.MAX_WIDTH,
             iiurlheight: WikipediaImage.MAX_HEIGHT,
             titles: titles.join('|')
