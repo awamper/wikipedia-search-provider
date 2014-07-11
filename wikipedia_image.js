@@ -1,12 +1,14 @@
 const Lang = imports.lang;
 const Signals = imports.signals;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Utils = Me.imports.utils;
+
 const REPOSITORIES = {
     LOCAL: 0,
     SHARED: 1
 };
 
-const MAX_IMAGES = 20;
 const MAX_WIDTH = 500;
 const MAX_HEIGHT = 500;
 
@@ -40,7 +42,7 @@ const WikipediaImage = new Lang.Class({
             // }
         }
 
-        if(!image_data.imageinfo) {
+        if(!image_data.imageinfo || Utils.ends_with(image_data.title, '.svg')) {
             this.exists = false;
             this.emit('loaded');
             return;
@@ -67,7 +69,6 @@ const WikipediaImage = new Lang.Class({
             convertitles: '',
             redirects: '',
             titles: this.title,
-            iilimit: MAX_IMAGES,
             iiurlwidth: MAX_WIDTH,
             iiurlheight: MAX_HEIGHT
         };
