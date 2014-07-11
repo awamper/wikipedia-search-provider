@@ -60,6 +60,10 @@ const WikipediaPage = new Lang.Class({
 
                         if(wikipedia_image.title === this.page_image_name) {
                             this.page_image = wikipedia_image;
+                            wikipedia_image.is_page_image = true;
+                        }
+                        else {
+                            wikipedia_image.is_page_image = false;
                         }
                     }
 

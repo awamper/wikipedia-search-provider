@@ -9,6 +9,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const PrefsKeys = Me.imports.prefs_keys;
 const WikipediaImageView = Me.imports.wikipedia_image_view;
+const WikipediaImageResultsView = Me.imports.wikipedia_image_results_view;
 
 const WikipediaResultView = new Lang.Class({
     Name: 'WikipediaResultView',
@@ -59,6 +60,16 @@ const WikipediaResultView = new Lang.Class({
             y_fill: true
         });
 
+        this._more_images_button = new St.Button({
+            label: '...',
+            style_class: 'wikipedia-result-buttons'
+        });
+        this._more_images_button.hide();
+        this._more_images_button.connect(
+            'clicked',
+            Lang.bind(this, this.show_more_images)
+        );
+
         this._box = new St.BoxLayout({
             style_class: 'wikipedia-content-box' + Utils.get_style_postfix(),
             vertical: true,
@@ -80,10 +91,20 @@ const WikipediaResultView = new Lang.Class({
             y_expand: true,
             y_fill: true
         })
+        this._box.add(this._more_images_button, {
+            x_expand: false,
+            y_expand: false,
+            x_fill: false,
+            y_fill: false,
+            x_align: St.Align.START,
+            y_align: St.Align.MIDDLE
+        });
 
         this.actor.add(this._box, {
             expand: true
         });
+
+        this._wikipedia_image_resuls = null;
     },
 
     _on_button_press: function(actor, event) {
@@ -110,10 +131,16 @@ const WikipediaResultView = new Lang.Class({
             && Utils.SETTINGS.get_boolean(PrefsKeys.ENABLE_IMAGES);
         if(!show_image) return;
 
+        if(this._wikipedia_page.images.length > 1) {
+            this._more_images_button.label = 'more images(%s)'.format(
+                this._wikipedia_page.images.length - 1
+            );
+            this._more_images_button.show();
+        }
+
         this._main_image = new WikipediaImageView.WikipediaImageView(
             this._wikipedia_page.page_image
         );
-
         this._details.remove_all_children();
         this._details.add(this._main_image.actor);
         this._details.add(this._extract_box, {
@@ -139,8 +166,45 @@ const WikipediaResultView = new Lang.Class({
         return width;
     },
 
+    show_more_images: function() {
+        if(this._wikipedia_image_resuls) {
+            this._wikipedia_image_resuls.show();
+            return;
+        }
+
+        let image_views = [];
+
+        for each(let wikipedia_image in this._wikipedia_page.images) {
+            if(wikipedia_image.is_page_image) continue;
+            let image_view = new WikipediaImageView.WikipediaImageView(
+                wikipedia_image
+            );
+            image_views.push(image_view);
+        }
+
+        this._more_images_button.add_style_pseudo_class('inactive');
+        this._more_images_button.label = 'loading...';
+        this._more_images_button.reactive = false;
+        this._more_images_button.track_hover = false;
+        this._wikipedia_image_resuls =
+            new WikipediaImageResultsView.WikipediaImageResultsView();
+        this._wikipedia_image_resuls.set_images(image_views);
+        this._wikipedia_image_resuls.connect('loaded',
+            Lang.bind(this, function() {
+                this._more_images_button.label = 'more images(%s)'.format(
+                    this._wikipedia_page.images.length - 1
+                );
+                this._more_images_button.remove_style_pseudo_class('inactive');
+                this._more_images_button.reactive = true;
+                this._more_images_button.track_hover = true;
+                this._wikipedia_image_resuls.show();
+            })
+        );
+    },
+
     destroy: function() {
         if(this.actor) this.actor.destroy();
+        if(this._wikipedia_image_resuls) this._wikipedia_image_resuls.destroy();
     },
 
     get wikipedia_page() {

@@ -113,3 +113,28 @@
     background-color: rgba(0, 0, 0, 0.7);
     padding: 2px;
 }
+
+.wikipedia-result-buttons {
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.wikipedia-result-buttons:hover {
+    color: #3465a4;
+    text-decoration: underline;
+}
+
+.wikipedia-result-buttons:active {
+    color: #0D4CA3;
+}
+
+.wikipedia-result-buttons:inactive {
+    color: grey;
+}
+
+.wikipedia-image-results-view {
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.9);
+    padding: 5px;
+}

@@ -18,6 +18,9 @@ const IMAGE_ENTER_TIMEOUT_TIME = 300;
 const CAMERA_ICON_SIZE = 80;
 const IMAGE_MENU_ICON_SIZE = 17;
 
+const MENU_MIN_OPACITY = 70;
+const MENU_MAX_OPACITY = 255;
+
 const TIMEOUT_IDS = {
     THUMB_ENTER: 0
 };
@@ -145,7 +148,7 @@ const WikipediaImageView = new Lang.Class({
         this._hide_big_image();
     },
 
-    _show_image_menu: function() {
+    _add_image_menu: function() {
         if(this._table.contains(this._image_menu_box)) return;
 
         this._table.add(this._image_menu_box, {
@@ -158,15 +161,30 @@ const WikipediaImageView = new Lang.Class({
             x_align: St.Align.END,
             y_align: St.Align.END
         });
-
         this._image_menu_box.translation_y = -(
             this._image_actor.y - this._image_menu_box.y
         );
+        this._image_menu_box.set_opacity(MENU_MIN_OPACITY);
+    },
+
+    _show_image_menu: function() {
+        Tweener.removeTweens(this._image_menu_box);
+        Tweener.addTween(this._image_menu_box, {
+            opacity: MENU_MAX_OPACITY,
+            time: 0.5,
+            transition: 'easeOutQuad'
+        });
     },
 
     _hide_image_menu: function() {
         if(!this._table.contains(this._image_menu_box)) return;
-        this._table.remove_child(this._image_menu_box);
+
+        Tweener.removeTweens(this._image_menu_box);
+        Tweener.addTween(this._image_menu_box, {
+            opacity: MENU_MIN_OPACITY,
+            time: 0.5,
+            transition: 'easeOutQuad'
+        });
     },
 
     _show_big_image: function() {
@@ -235,6 +253,14 @@ const WikipediaImageView = new Lang.Class({
     _on_image_loaded: function() {
         let small_size = this._get_small_size();
         this._image_actor.set_size(small_size[0], small_size[1]);
+        this._image_actor.connect(
+            'enter-event',
+            Lang.bind(this, this._show_image_menu)
+        );
+        this._image_actor.connect(
+            'leave-event',
+            Lang.bind(this, this._hide_image_menu)
+        );
         this.emit('loaded');
     },
 
@@ -270,9 +296,7 @@ const WikipediaImageView = new Lang.Class({
                     opacity: 255,
                     time: IMAGE_ANIMATION_TIME,
                     transition: 'easeOutQuad',
-                    onComplete: Lang.bind(this, function() {
-                        this._show_image_menu();
-                    })
+                    onComplete: Lang.bind(this, this._add_image_menu)
                 });
 
                 Tweener.removeTweens(this._image_dummy);

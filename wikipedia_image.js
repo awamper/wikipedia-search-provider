@@ -23,6 +23,7 @@ const WikipediaImage = new Lang.Class({
         this._thumb_width = 0,
         this._thumb_height = 0;
         this._exists = null;
+        this._is_page_image = null;
 
         if(image_title) this.title = image_title;
     },
@@ -146,6 +147,14 @@ const WikipediaImage = new Lang.Class({
 
     set exists(exists) {
         this._exists = exists;
+    },
+
+    get is_page_image() {
+        return this._is_page_image;
+    },
+
+    set is_page_image(is_page_image) {
+        this._is_page_image = is_page_image;
     }
 });
 Signals.addSignalMethods(WikipediaImage.prototype);
