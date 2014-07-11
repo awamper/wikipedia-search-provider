@@ -71,39 +71,10 @@ const WikipediaImageView = new Lang.Class({
             Lang.bind(this, this._on_zoom_leave)
         );
 
-        this._more_images = new St.Icon({
-            icon_name: Utils.ICONS.VIEW_MORE,
-            icon_size: IMAGE_MENU_ICON_SIZE,
-            style_class: 'wikipedia-image-view-more-icon',
-            reactive: true,
-            track_hover: true
-        });
-        this._more_images.connect(
-            'button-press-event',
-            Lang.bind(this, function() {
-                return Clutter.EVENT_STOP;
-            })
-        );
-        this._more_images.connect(
-            'button-release-event',
-            Lang.bind(this, function() {
-                this.emit('show-more-images');
-                return Clutter.EVENT_STOP;
-            })
-        );
-
         this._image_menu_box = new St.BoxLayout({
             style_class: 'wikipedia-image-view-menu-box'
         });
         this._image_menu_box.add(this._zoom_icon, {
-            x_expand: true,
-            y_expand: true,
-            x_fill: false,
-            y_fill: false,
-            x_align: St.Align.END,
-            y_align: St.Align.MIDDLE
-        });
-        this._image_menu_box.add(this._more_images, {
             x_expand: true,
             y_expand: true,
             x_fill: false,
