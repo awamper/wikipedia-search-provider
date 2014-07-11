@@ -113,11 +113,3 @@
     background-color: rgba(0, 0, 0, 0.7);
     padding: 2px;
 }
-
-.wikipedia-image-view-more-icon {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.wikipedia-image-view-more-icon:hover {
-    color: rgba(255, 255, 255, 1);
-}
