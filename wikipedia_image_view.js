@@ -336,6 +336,26 @@ const WikipediaImageView = new Lang.Class({
     destroy: function() {
         this._on_destroy();
         this.actor.destroy();
+    },
+
+    get small_width() {
+        return this._get_small_size()[0];
+    },
+
+    get small_height() {
+        return this._get_small_size()[1];
+    },
+
+    get width() {
+        return this._wikipedia_image.thumb_width;
+    },
+
+    get height() {
+        return this._wikipedia_image.thumb_height;
+    },
+
+    get wikipedia_image() {
+        return this._wikipedia_image;
     }
 });
 Signals.addSignalMethods(WikipediaImageView.prototype);
