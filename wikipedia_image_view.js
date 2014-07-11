@@ -235,6 +235,7 @@ const WikipediaImageView = new Lang.Class({
     _on_image_loaded: function() {
         let small_size = this._get_small_size();
         this._image_actor.set_size(small_size[0], small_size[1]);
+        this.emit('loaded');
     },
 
     _get_clone_background: function() {
