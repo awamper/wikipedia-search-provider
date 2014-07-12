@@ -6,6 +6,9 @@ const Main = imports.ui.main;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const PopupDialog = Me.imports.popup_dialog;
 
+const MIN_WIDTH = 250;
+const MIN_HEIGHT = 150
+
 const WikipediaImageResultsView = new Lang.Class({
     Name: "WikipediaImageResultsView",
     Extends: PopupDialog.PopupDialog,
@@ -29,7 +32,13 @@ const WikipediaImageResultsView = new Lang.Class({
         this._relative_actor = relative_actor;
     },
 
+    _resize: function() {
+        if(this.actor.width < MIN_WIDTH) this.actor.width = MIN_WIDTH;
+        if(this.actor.height < MIN_HEIGHT) this.actor.height = MIN_HEIGHT;
+    },
+
     _reposition: function() {
+        this._resize();
         let [x, y] = [null, null];
 
         if(this._relative_actor) {
