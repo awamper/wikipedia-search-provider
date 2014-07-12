@@ -387,18 +387,14 @@ const WikipediaSearchProvider = new Lang.Class({
         }
 
         CONNECTION_IDS.SHORTCUTS = Utils.SETTINGS.connect(
-            'changed::' + PrefsKeys.WIKI_ENABLE_SHORTCUTS,
+            'changed::' + PrefsKeys.ENABLE_SHORTCUTS,
             Lang.bind(this, function() {
                 let enable = Utils.SETTINGS.get_boolean(
-                    PrefsKeys.WIKI_ENABLE_SHORTCUTS
+                    PrefsKeys.ENABLE_SHORTCUTS
                 );
 
-                if(Utils.SETTINGS.get_boolean(PrefsKeys.ENABLE_SHORTCUTS)) {
-                    this.add_keybindings();
-                }
-                else {
-                    this.remove_keybindings();
-                }
+                if(enable) this.add_keybindings();
+                else this.remove_keybindings();
             })
         );
     },
@@ -425,8 +421,11 @@ const WikipediaSearchProvider = new Lang.Class({
 
         this._wikipedia_display.destroy();
         this._wikipedia_client.destroy();
-        this.remove_keybindings();
         delete this._overview_search_results;
+
+        if(Utils.SETTINGS.get_boolean(PrefsKeys.ENABLE_SHORTCUTS)) {
+            this.remove_keybindings();
+        }
     }
 });
 
