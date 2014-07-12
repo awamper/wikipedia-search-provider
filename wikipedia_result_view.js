@@ -6,6 +6,9 @@ const Signals = imports.signals;
 const Clutter = imports.gi.Clutter;
 const Tweener = imports.ui.tweener;
 
+const Gettext = imports.gettext.domain('wikipedia_search_provider');
+const _ = Gettext.gettext;
+
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const PrefsKeys = Me.imports.prefs_keys;
@@ -132,7 +135,7 @@ const WikipediaResultView = new Lang.Class({
         );
 
         this._copy_url_button = new St.Button({
-            label: 'copy url',
+            label: _('copy url'),
             style_class: 'wikipedia-result-buttons'
         });
         this._copy_url_button.connect(
@@ -205,7 +208,7 @@ const WikipediaResultView = new Lang.Class({
         if(!show_image) return;
 
         if(this._wikipedia_page.images.length > 1) {
-            this._more_images_button.label = 'more images(%s)'.format(
+            this._more_images_button.label = _('more images(%s)').format(
                 this._wikipedia_page.images.length - 1
             );
             this._more_images_button.show();
@@ -265,7 +268,7 @@ const WikipediaResultView = new Lang.Class({
         }
 
         this._more_images_button.add_style_pseudo_class('inactive');
-        this._more_images_button.label = 'loading...';
+        this._more_images_button.label = _('loading...');
         this._more_images_button.reactive = false;
         this._more_images_button.track_hover = false;
         this._wikipedia_image_resuls =
@@ -275,7 +278,7 @@ const WikipediaResultView = new Lang.Class({
         this._wikipedia_image_resuls.set_images(image_views);
         this._wikipedia_image_resuls.connect('loaded',
             Lang.bind(this, function() {
-                this._more_images_button.label = 'more images(%s)'.format(
+                this._more_images_button.label = _('more images(%s)').format(
                     this._wikipedia_page.images.length - 1
                 );
                 this._more_images_button.remove_style_pseudo_class('inactive');
