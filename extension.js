@@ -201,7 +201,7 @@ const WikipediaSearchProvider = new Lang.Class({
             exchars: max_chars,
             exintro: '',
             redirects: '',
-            imlimit: 100,
+            imlimit: 500,
             generator: 'search',
             gsrsearch: term,
             gsrnamespace: 0,
