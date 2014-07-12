@@ -415,7 +415,7 @@ const WikipediaSearchProviderPrefsWidget = new GObject.Class({
         );
 
         adjustment_properties.lower = 50;
-        adjustment_properties.upper = 200;
+        adjustment_properties.upper = 1000;
         adjustment_properties.step_increment = 50;
         let max_chars = page.add_spin(
             _("Max chars:"),
