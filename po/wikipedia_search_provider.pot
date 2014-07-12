@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wikipedia Search Provier\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-12 21:20+0800\n"
+"POT-Creation-Date: 2014-07-12 21:37+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -134,4 +134,17 @@ msgstr ""
 
 #: wikipedia_results_view.js:76
 msgid "Did you mean: "
+msgstr ""
+
+#: wikipedia_result_view.js:138
+msgid "copy url"
+msgstr ""
+
+#: wikipedia_result_view.js:211 wikipedia_result_view.js:281
+#, javascript-format
+msgid "more images(%s)"
+msgstr ""
+
+#: wikipedia_result_view.js:271
+msgid "loading..."
 msgstr ""
