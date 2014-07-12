@@ -4,12 +4,64 @@ const Main = imports.ui.main;
 const Pango = imports.gi.Pango;
 const Signals = imports.signals;
 const Clutter = imports.gi.Clutter;
+const Tweener = imports.ui.tweener;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const PrefsKeys = Me.imports.prefs_keys;
 const WikipediaImageView = Me.imports.wikipedia_image_view;
 const WikipediaImageResultsView = Me.imports.wikipedia_image_results_view;
+const PopupDialog = Me.imports.popup_dialog;
+
+const CopiedUrlLabel = new Lang.Class({
+    Name: 'CopiedUrlLabel',
+    Extends: PopupDialog.PopupDialog,
+
+    _init: function(text, x, y) {
+        this.parent({
+            style_class: 'wikipedia-copy-url-label',
+            modal: false
+        });
+
+        let label = new St.Label({
+            text: text
+        });
+        this.actor.add_child(label);
+
+        this._x = x;
+        this._y = y;
+    },
+
+    show: function() {
+        this._reposition(this._x, this._y);
+
+        this.actor.set_pivot_point(0.5, 0.5);
+        this.actor.set_scale(0.7, 0.7);
+        this.actor.set_opacity(0);
+        this.actor.show();
+
+        Tweener.addTween(this.actor, {
+            time: 0.4,
+            scale_x: 1,
+            scale_y: 1,
+            opacity: 255,
+            transition: 'easeInExpo',
+            onComplete: Lang.bind(this, function() {
+                Tweener.addTween(this.actor, {
+                    delay: 0.9,
+                    time: 0.4,
+                    scale_x: 1.7,
+                    scale_y: 1.7,
+                    opacity: 0,
+                    transition: 'easeInExpo',
+                    onComplete: Lang.bind(this, function() {
+                        this.destroy();
+                    })
+                });
+            })
+        });
+    }
+});
 
 const WikipediaResultView = new Lang.Class({
     Name: 'WikipediaResultView',
@@ -27,6 +79,10 @@ const WikipediaResultView = new Lang.Class({
         });
         this.actor.connect('destroy', Lang.bind(this, this.destroy));
 
+        this._title_box = new St.BoxLayout({
+            vertical: false
+        });
+
         this._title_label = new St.Label({
             text: this._wikipedia_page.title,
             style_class: 'wikipedia-title',
@@ -36,6 +92,11 @@ const WikipediaResultView = new Lang.Class({
         });
         this._title_label.clutter_text.set_single_line_mode(true);
         this._title_label.clutter_text.set_ellipsize(Pango.EllipsizeMode.END);
+        this._title_box.add(this._title_label, {
+            expand: true,
+            x_align: St.Align.START,
+            y_align: St.Align.MIDDLE
+        });
 
         this._extract_label = new St.Label({
             style: 'font-size: %spx;'.format(
@@ -70,6 +131,18 @@ const WikipediaResultView = new Lang.Class({
             Lang.bind(this, this.show_more_images)
         );
 
+        this._copy_url_button = new St.Button({
+            label: 'copy url',
+            style_class: 'wikipedia-result-buttons'
+        });
+        this._copy_url_button.connect(
+            'clicked',
+            Lang.bind(this, this._copy_url_to_clipboard)
+        );
+        this._copy_url_button.translation_y = -10;
+        this._title_box.add_child(this._copy_url_button);
+        if(Utils.is_blank(this._wikipedia_page.url)) this._copy_url_button.hide();
+
         this._box = new St.BoxLayout({
             style_class: 'wikipedia-content-box' + Utils.get_style_postfix(),
             vertical: true,
@@ -84,7 +157,7 @@ const WikipediaResultView = new Lang.Class({
             'button-release-event',
             Lang.bind(this, this._on_button_release)
         );
-        this._box.add(this._title_label);
+        this._box.add(this._title_box);
         this._box.add(this._details, {
             x_expand: true,
             x_fill: true,
@@ -164,6 +237,15 @@ const WikipediaResultView = new Lang.Class({
         }
 
         return width;
+    },
+
+    _copy_url_to_clipboard: function() {
+        let clipboard = St.Clipboard.get_default();
+        clipboard.set_text(St.ClipboardType.CLIPBOARD, this._wikipedia_page.url);
+
+        let [x, y] = this._copy_url_button.get_transformed_position();
+        let animated_label = new CopiedUrlLabel(this._wikipedia_page.url, x, y);
+        animated_label.show();
     },
 
     show_more_images: function() {
