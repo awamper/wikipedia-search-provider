@@ -117,7 +117,7 @@
 .wikipedia-result-buttons {
     font-size: 12px;
     font-weight: bold;
-    color: white;
+    color: gray;
 }
 
 .wikipedia-result-buttons:hover {
@@ -130,7 +130,7 @@
 }
 
 .wikipedia-result-buttons:inactive {
-    color: grey;
+    color: rgba(255, 255, 255, 0.3);
 }
 
 .wikipedia-image-results-view {
