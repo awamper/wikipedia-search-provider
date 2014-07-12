@@ -18,7 +18,7 @@ const MessagePage = new Lang.Class({
 
     _init: function(msg) {
         this.id = -1;
-        this.title = 'Wikipedia Seach Provider';
+        this.title = 'Wikipedia Search Provider';
         this.extract = msg;
         this.properties = {
             disambiguation: null,
