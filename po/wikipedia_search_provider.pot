@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wikipedia Search Provier\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-21 21:52+0800\n"
+"POT-Creation-Date: 2014-07-12 21:20+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,121 +17,121 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: extension.js:55 extension.js:221 extension.js:378 extension.js:395
-msgid "Wikipedia Search Provider"
-msgstr ""
-
-#: extension.js:56
+#: extension.js:71
 msgid "Enter your query"
 msgstr ""
 
-#: extension.js:223
+#: extension.js:189
 msgid "Your search - "
 msgstr ""
 
-#: extension.js:224
+#: extension.js:190
 msgid ""
 " - did not match any documents.\n"
 "Language: "
 msgstr ""
 
-#: extension.js:379
+#: extension.js:221
 #, javascript-format
 msgid "Search for '%s'"
 msgstr ""
 
-#: extension.js:392
+#: extension.js:228
 msgid "Searching for "
 msgstr ""
 
-#: prefs.js:88
+#: prefs.js:66
 msgid "Action"
 msgstr ""
 
-#: prefs.js:106
+#: prefs.js:84
 msgid "Can't change keybinding"
 msgstr ""
 
-#: prefs.js:121
+#: prefs.js:99
 msgid "Modify"
 msgstr ""
 
-#: prefs.js:288
+#: prefs.js:377
 msgid "Main"
 msgstr ""
 
-#: prefs.js:293
+#: prefs.js:381
 msgid "Enable dark theme:"
 msgstr ""
 
-#: prefs.js:298
+#: prefs.js:386
 msgid "Show first in overview:"
 msgstr ""
 
-#: prefs.js:303
+#: prefs.js:391
 msgid "Exclude disambiguation pages:"
 msgstr ""
 
-#: prefs.js:308
+#: prefs.js:396
 msgid "Keyword:"
 msgstr ""
 
-#: prefs.js:313
+#: prefs.js:401
 msgid "Default language:"
 msgstr ""
 
-#: prefs.js:317
+#: prefs.js:411
 msgid "Delay time(ms):"
 msgstr ""
 
-#: prefs.js:323
+#: prefs.js:421
 msgid "Max chars:"
 msgstr ""
 
-#: prefs.js:330
-msgid "Title font size(px):"
-msgstr ""
-
-#: prefs.js:339
-msgid "Extract font size(px):"
-msgstr ""
-
-#: prefs.js:348
+#: prefs.js:431
 msgid "Max results:"
 msgstr ""
 
-#: prefs.js:357
+#: prefs.js:439
 msgid "Max result columns:"
 msgstr ""
 
-#: prefs.js:375
-msgid "Height(px):"
-msgstr ""
-
-#: prefs.js:392 prefs.js:397
-msgid "Images"
-msgstr ""
-
-#: prefs.js:413
-msgid "Max width:"
-msgstr ""
-
-#: prefs.js:423
-msgid "Max height:"
-msgstr ""
-
-#: prefs.js:441 prefs.js:446
-msgid "Shortcuts"
+#: prefs.js:453
+msgid "Size"
 msgstr ""
 
 #: prefs.js:462
+msgid "Title font size(px):"
+msgstr ""
+
+#: prefs.js:470
+msgid "Extract font size(px):"
+msgstr ""
+
+#: prefs.js:480
+msgid "Result height(px):"
+msgstr ""
+
+#: prefs.js:494 prefs.js:498
+msgid "Images"
+msgstr ""
+
+#: prefs.js:519
+msgid "Max width:"
+msgstr ""
+
+#: prefs.js:528
+msgid "Max height:"
+msgstr ""
+
+#: prefs.js:543 prefs.js:547
+msgid "Shortcuts"
+msgstr ""
+
+#: prefs.js:563
 msgid "Search from clipboard"
 msgstr ""
 
-#: prefs.js:464
+#: prefs.js:565
 msgid "Search from primary selection"
 msgstr ""
 
-#: wikipedia_results.js:36
+#: wikipedia_results_view.js:76
 msgid "Did you mean: "
 msgstr ""
