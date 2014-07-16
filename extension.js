@@ -253,15 +253,110 @@ const WikipediaSearchProvider = new Lang.Class({
         this._wikipedia_display.show_suggestion_if_exist();
     },
 
+    _show_overview: function() {
+        if(Main.overview.visible) return;
+
+        Main.overview._syncGrab()
+        Main.layoutManager.showOverview();
+        Main.overview.visible = true;
+        Main.overview._activationTime = Date.now() / 1000;
+        Meta.disable_unredirect_for_screen(global.screen);
+        // Main.overview.viewSelector.show();
+        // Main.overview._shadeBackgrounds();
+        // Main.overview._coverPane.raise_top();
+        // Main.overview._coverPane.show();
+        // Main.overview._desktopFade.hide();
+        // Main.overview._coverPane.hide();
+        Main.overview._syncGrab();
+        global.sync_pointer();
+    },
+
+    _hide_overview: function() {
+        if(!Main.overview._shown) return;
+
+        Main.overview._shown = false;
+        Main.overview._syncGrab();
+        // Main.overview.viewSelector.zoomFromOverview();
+        // Main.overview._unshadeBackgrounds();
+        // Main.overview._coverPane.raise_top();
+        // Main.overview._coverPane.show();
+        Meta.enable_unredirect_for_screen(global.screen);
+        Main.overview.viewSelector.hide();
+        // Main.overview._desktopFade.hide();
+        // Main.overview._coverPane.hide();
+        Main.overview.visible = false;
+        Main.layoutManager.hideOverview();
+        Main.overview._syncGrab();
+    },
+
+    _hide_windows: function() {
+        let children = global.window_group.get_children();
+
+        for each(let child in children) {
+            if(!child.get_meta_window) {
+                child.hide();
+                continue;
+            }
+
+            let meta_window = child.get_meta_window();
+            if(meta_window.get_title() !== 'Viewer') child.hide();
+            // else meta_window.activate(null);
+        }
+    },
+
+    _show_windows: function() {
+        let children = global.window_group.get_children();
+        for each(let child in children) child.show();
+    },
+
+    _show_viewer: function(url) {
+        if(this._viewer_shown) return;
+
+        Utils.launch_viewer(url, Lang.bind(this, this._hide_viewer));
+        this._hide_overview();
+        this._viewer_shown = true;
+        this._hide_windows();
+        this._overview_clone = new Clutter.Clone({
+            source: Main.layoutManager.overviewGroup
+        });
+        // Main.uiGroup.set_child_above_sibling(
+        //     global.window_group,
+        //     Main.layoutManager.overviewGroup
+        // );
+        Main.uiGroup.insert_child_below(
+            this._overview_clone,
+            global.window_group
+        );
+        // Main.layoutManager.hideOverview();
+        // Main.popModal(Main.overview._overview);
+    },
+
+    _hide_viewer: function() {
+        if(!this._viewer_shown) return;
+
+        this._viewer_shown = false;
+        this._overview_clone.destroy();
+        this._show_overview();
+        this._show_windows();
+        // Meta.disable_unredirect_for_screen(global.screen);
+        // Main.pushModal(Main.overview._overview);
+        // Main.uiGroup.set_child_above_sibling(
+        //     Main.layoutManager.overviewGroup,
+        //     global.window_group
+        // );
+        // Main.layoutManager.showOverview();
+    },
+
     _on_activate: function(object, wikipedia_result_view) {
         let url = wikipedia_result_view.wikipedia_page.url;
         if(Utils.is_blank(url)) return;
 
-        Gio.app_info_launch_default_for_uri(
-            url,
-            global.create_app_launch_context(0, -1)
-        );
-        this._animate_activation(wikipedia_result_view);
+        this._show_viewer('https://en.m.wikipedia.org/wiki/Mexico_City');
+        // Gio.app_info_launch_default_for_uri(
+        //     url,
+        //     global.create_app_launch_context(0, -1)
+        // );
+        // this._animate_activation(wikipedia_result_view);
     },
 
     _animate_activation: function(wikipedia_result_view) {

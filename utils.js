@@ -1,5 +1,6 @@
 const Gettext = imports.gettext;
 const Gio = imports.gi.Gio;
+const GLib = imports.gi.GLib;
 const Clutter = imports.gi.Clutter;
 const ExtensionUtils = imports.misc.extensionUtils;
 
@@ -13,6 +14,36 @@ const ICONS = {
 };
 
 const SETTINGS = getSettings();
+
+function launch_viewer(url, callback) {
+    let app_file = '%s/%s'.format(Me.path, 'viewer.js');
+
+    let [success, pid] = GLib.spawn_async(
+        null,
+        ['gjs', app_file, url],
+        null,
+        GLib.SpawnFlags.SEARCH_PATH | GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+        null
+    );
+
+    if(!success) {
+        callback(false);
+        return;
+    }
+
+    GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid,
+        function(pid, status) {
+            GLib.spawn_close_pid(pid);
+
+            if(status != 0) {
+                callback(false);
+            }
+            else {
+                callback(true);
+            }
+        }
+    );
+}
 
 function get_style_postfix() {
     return (SETTINGS.get_boolean(
