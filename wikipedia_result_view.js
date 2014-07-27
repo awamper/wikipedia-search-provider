@@ -134,15 +134,14 @@ const WikipediaResultView = new Lang.Class({
             Lang.bind(this, this.show_more_images)
         );
 
-        this._copy_url_button = new St.Button({
-            label: _('copy url'),
-            style_class: 'wikipedia-result-buttons'
+        this._copy_url_button = new St.Icon({
+            icon_name: 'insert-link-symbolic',
+            style_class: 'wikipedia-copy-url-button',
+            reactive: true,
+            track_hover: true
         });
-        this._copy_url_button.connect(
-            'clicked',
-            Lang.bind(this, this._copy_url_to_clipboard)
-        );
-        this._copy_url_button.translation_y = -10;
+        this._copy_url_button.translation_y = -8;
+        this._copy_url_button.translation_x = 6;
         this._title_box.add_child(this._copy_url_button);
         if(Utils.is_blank(this._wikipedia_page.url)) this._copy_url_button.hide();
 
@@ -184,13 +183,24 @@ const WikipediaResultView = new Lang.Class({
     },
 
     _on_button_press: function(actor, event) {
-        actor.add_style_pseudo_class("active");
+        if(Utils.is_pointer_inside_actor(this._copy_url_button)) {
+            this._copy_url_button.add_style_pseudo_class('active');
+        }
+        else {
+            actor.add_style_pseudo_class('active');
+        }
     },
 
     _on_button_release: function(actor, event) {
-        let button = event.get_button();
-        actor.remove_style_pseudo_class("active");
-        this.emit("clicked", button);
+        if(Utils.is_pointer_inside_actor(this._copy_url_button)) {
+            this._copy_url_button.remove_style_pseudo_class('active');
+            this._copy_url_to_clipboard();
+        }
+        else {
+            let button = event.get_button();
+            actor.remove_style_pseudo_class('active');
+            this.emit('clicked', button);
+        }
     },
 
     _on_images_loaded: function() {

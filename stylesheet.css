@@ -138,3 +138,17 @@
     border: 1px solid #0D4CA3;
     padding: 5px;
 }
+
+.wikipedia-copy-url-button {
+    icon-size: 14px;
+    padding: 2px;
+    color: grey;
+}
+
+.wikipedia-copy-url-button:hover {
+    color: white;
+}
+
+.wikipedia-copy-url-button:active {
+    color: #0D4CA3;
+}
