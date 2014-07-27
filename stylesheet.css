@@ -101,14 +101,6 @@
     transition-duration: 300ms;
 }
 
-.wikipedia-status-box-dark {
-    border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #C2C2C2;
-    padding: 5px 5px 10px 10px;
-    transition-duration: 300ms;
-}
-
 .wikipedia-image-view-menu-box {
     background-color: rgba(0, 0, 0, 0.7);
     padding: 2px;
