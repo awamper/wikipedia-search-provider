@@ -1,7 +1,7 @@
 # Basic Makefile
 
 UUID = wikipedia_search_provider@awamper.gmail.com
-BASE_MODULES = extension.js metadata.json popup_dialog.js prefs.js prefs_keys.js stylesheet.css utils.js wikipedia_client.js wikipedia_image.js wikipedia_image_results_view.js wikipedia_image_view.js wikipedia_page.js wikipedia_results_view.js wikipedia_result_view.js wikipedia_search_suggestion.js
+BASE_MODULES = extension.js metadata.json popup_dialog.js prefs.js prefs_keys.js stylesheet.css utils.js wikipedia_client.js wikipedia_image.js wikipedia_image_results_view.js wikipedia_image_view.js wikipedia_page.js wikipedia_results_view.js wikipedia_result_view.js wikipedia_search_suggestion.js viewer.js
 EXTRA_MODULES = wikipedia.png
 TOLOCALIZE = extension.js prefs.js wikipedia_image_results_view.js wikipedia_results_view.js wikipedia_result_view.js wikipedia_search_suggestion.js
 MSGSRC = $(wildcard po/*.po)
