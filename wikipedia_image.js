@@ -100,6 +100,10 @@ const WikipediaImage = new Lang.Class({
         this._title = title;
     },
 
+    get clean_title() {
+        return this._title.slice(5, this._title.lastIndexOf('.'));
+    },
+
     get repository() {
         return this._repository;
     },

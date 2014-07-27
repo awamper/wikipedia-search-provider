@@ -222,7 +222,20 @@ const WikipediaImageView = new Lang.Class({
             scale_y: scale_factor,
             opacity: 255,
             time: SCALE_ANIMATION_TIME,
-            transition: 'easeOutQuad'
+            transition: 'easeOutQuad',
+            onComplete: Lang.bind(this, function() {
+                let [x, y] = this._clone_background.get_transformed_position();
+                this._image_title_label = new St.Label({
+                    text: this.wikipedia_image.clean_title,
+                    style: 'background-color: rgba(0, 0, 0, 0.7); padding-left: 3px;',
+                    width: this._clone_background.width * scale_factor,
+                    x: x,
+                    y: y
+                });
+                Main.uiGroup.add_child(this._image_title_label);
+                this._image_title_label.translation_y =
+                    -this._image_title_label.height;
+            })
         });
     },
 
@@ -232,6 +245,7 @@ const WikipediaImageView = new Lang.Class({
             TIMEOUT_IDS.THUMB_ENTER = 0;
         }
 
+        if(this._image_title_label) this._image_title_label.destroy();
         if(this._clone_background && this._image_clone) {
             Tweener.removeTweens(this._clone_background);
             Tweener.addTween(this._clone_background, {
