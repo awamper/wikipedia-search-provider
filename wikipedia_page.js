@@ -202,6 +202,10 @@ const WikipediaPage = new Lang.Class({
         this._url = url;
     },
 
+    get mobile_url() {
+        return '%s?%s'.format(this._url, 'useformat=mobile');
+    },
+
     get extract() {
         return this._extract;
     },

@@ -119,8 +119,8 @@ const WikipediaResultsView = new Lang.Class({
             let result = results[i];
             let column = i % max_columns;
             result.connect("clicked",
-                Lang.bind(this, function() {
-                    this.emit("activate", result);
+                Lang.bind(this, function(actor, button) {
+                    this.emit("activate", button, result);
                 })
             );
             this._table.add(result.actor, {

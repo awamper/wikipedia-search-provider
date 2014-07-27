@@ -42,11 +42,41 @@ const Application = new Lang.Class({
             decorated: false
         });
         this._window.set_size_request(700, 700);
+        this._window.fullscreen();
+        let accel_group = new Gtk.AccelGroup();
+        let [key, modifier] = Gtk.accelerator_parse('Escape');
+        accel_group.connect(
+            key,
+            modifier,
+            Gtk.AccelFlags.VISIBLE,
+            Lang.bind(this, this._quit)
+        );
+        this._window.add_accel_group(accel_group);
 
         let vbox = new Gtk.Box({
             orientation: Gtk.Orientation.VERTICAL
         });
         this._window.add(vbox);
+
+        let button_box = new Gtk.Box({
+            orientation: Gtk.Orientation.HORIZONTAL,
+            halign: Gtk.Align.END
+        });
+        let label = new Gtk.Label({
+            label: 'Press <Escape> to '
+        });
+        let button = new Gtk.Button({
+            label: '<u>exit</u>',
+            relief: Gtk.ReliefStyle.NONE
+        });
+        button.get_children()[0].set_use_markup(true);
+        button.connect('clicked', Lang.bind(this, this._quit));
+        button_box.pack_start(label, true, false, 0);
+        button_box.pack_start(button, false, false, 0);
+        vbox.pack_start(button_box, false, false, 0);
+
+        this._progress_bar = new Gtk.ProgressBar();
+        vbox.pack_start(this._progress_bar, false, false, 0);
 
         this._web_view = new WebKit.WebView();
         this._web_view.connect(
@@ -61,10 +91,20 @@ const Application = new Lang.Class({
         this._window.show_all();
     },
 
+    _quit: function() {
+        this.application.quit();
+    },
+
     _on_web_view_progress: function(web_view) {
-        // if(web_view.get_progress() === 1) {
-        //     this._web_view.show_all();
-        // }
+        let progress = web_view.get_progress();
+
+        if(progress === 1) {
+            this._progress_bar.hide();
+        }
+        else {
+            this._progress_bar.show();
+            this._progress_bar.set_fraction(progress);
+        }
     },
 
     _on_activate: function() {

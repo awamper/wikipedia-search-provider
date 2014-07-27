@@ -184,21 +184,13 @@ const WikipediaResultView = new Lang.Class({
     },
 
     _on_button_press: function(actor, event) {
-        let button = event.get_button();
-
-        if(button === Clutter.BUTTON_PRIMARY) {
-            actor.add_style_pseudo_class("active");
-        }
+        actor.add_style_pseudo_class("active");
     },
 
     _on_button_release: function(actor, event) {
         let button = event.get_button();
         actor.remove_style_pseudo_class("active");
-
-        if(button === Clutter.BUTTON_PRIMARY) {
-            this.emit("clicked", button);
-            return;
-        }
+        this.emit("clicked", button);
     },
 
     _on_images_loaded: function() {
