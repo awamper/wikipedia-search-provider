@@ -111,6 +111,7 @@ const WikipediaResultsView = new Lang.Class({
 
     set_results: function(results) {
         this.clear();
+        Main.overview.viewSelector._searchResults._scrollView.show();
 
         let row = 1;
         let max_columns = Utils.SETTINGS.get_int(PrefsKeys.MAX_RESULT_COLUMNS);
