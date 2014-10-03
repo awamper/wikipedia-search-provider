@@ -23,7 +23,8 @@ const CONNECTION_IDS = {
     SHORTCUTS: 0,
     SHOW_FIRST: 0,
     KEY_RELEASE: 0,
-    TEXT_CHANGED: 0
+    TEXT_CHANGED: 0,
+    SCROLLVIEW_VISIBLE: 0
 };
 const TIMEOUT_IDS = {
     SEARCH: 0
@@ -57,6 +58,18 @@ const WikipediaSearchProvider = new Lang.Class({
             Main.overview._searchEntry.clutter_text.connect(
                 "text-changed",
                 Lang.bind(this, this._on_text_changed)
+            );
+        CONNECTION_IDS.SCROLLVIEW_VISIBLE =
+            Main.overview.viewSelector._searchResults._scrollView.connect(
+                'notify::visible',
+                Lang.bind(this, function() {
+                    let visible = Main.overview.viewSelector._searchResults._scrollView.visible;
+                    if(visible || !Main.overview._shown) return;
+
+                    if(this._wikipedia_display.n_results > 0) {
+                        Main.overview.viewSelector._searchResults._scrollView.show();
+                    }
+                })
             );
     },
 
@@ -446,6 +459,12 @@ const WikipediaSearchProvider = new Lang.Class({
                 CONNECTION_IDS.TEXT_CHANGED
             );
             CONNECTION_IDS.TEXT_CHANGED = 0;
+        }
+        if(CONNECTION_IDS.SCROLLVIEW_VISIBLE > 0) {
+            Main.overview.viewSelector._searchResults._scrollView.disconnect(
+                CONNECTION_IDS.SCROLLVIEW_VISIBLE
+            );
+            CONNECTION_IDS.SCROLLVIEW_VISIBLE = 0;
         }
 
         this._wikipedia_display.destroy();

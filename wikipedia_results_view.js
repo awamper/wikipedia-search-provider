@@ -188,6 +188,10 @@ const WikipediaResultsView = new Lang.Class({
     destroy: function() {
         this.actor.destroy();
         this._suggestion.destroy();
+    },
+
+    get n_results() {
+        return this._table.get_n_children();
     }
 });
 Signals.addSignalMethods(WikipediaResultsView.prototype);
