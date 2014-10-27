@@ -1,15 +1,15 @@
-# Chinese translations for PACKAGE package
-# PACKAGE 软件包的简体中文翻译.
-# Copyright (C) 2014 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Chinese translations for Wikipedia Search package
+# Wikipedia Search 软件包的简体中文翻译.
+# Copyright (C) 2014 THE Wikipedia Search'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Wikipedia Search package.
 # gmg <gmg137@live.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Wikipedia Search Provier\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-17 18:41+0200\n"
-"PO-Revision-Date: 2014-01-21 21:02+0800\n"
+"POT-Creation-Date: 2014-07-12 21:37+0800\n"
+"PO-Revision-Date: 2014-10-27 13:39+0800\n"
 "Last-Translator: gmg <gmg137@live.com>\n"
 "Language-Team: Chinese (simplified)\n"
 "Language: zh_CN\n"
@@ -17,105 +17,140 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js:89
-msgid "Action"
-msgstr "选项"
+#: extension.js:71
+msgid "Enter your query"
+msgstr "请输入您的查询"
 
-#: prefs.js:107
-msgid "Can't change keybinding"
-msgstr "不能更改键绑定"
-
-#: prefs.js:122
-msgid "Modify"
-msgstr "修改"
-
-#: prefs.js:289
-msgid "Settings"
-msgstr "设置"
-
-#: prefs.js:295
-msgid "Keyword:"
-msgstr "关键字:"
-
-#: prefs.js:301
-msgid "Default language:"
-msgstr "默认语言:"
-
-#: prefs.js:306
-msgid "Delay time(ms):"
-msgstr "延迟时间（毫秒）:"
-
-#: prefs.js:313
-msgid "Max chars:"
-msgstr "最多字符数:"
-
-#: prefs.js:328
-msgid "Theme"
-msgstr "主题"
-
-#: prefs.js:355
-msgid "Theme:"
-msgstr "主题:"
-
-#: prefs.js:359
-msgid "Title font size(px):"
-msgstr "标题字体大小（像素）:"
-
-#: prefs.js:369
-msgid "Extract font size(px):"
-msgstr "概览字体大小（像素）:"
-
-#: prefs.js:379
-msgid "Max results rows:"
-msgstr "显示的最大行数："
-
-#: prefs.js:388
-msgid "Requires restart shell"
-msgstr "需要重新启动外壳"
-
-#: prefs.js:391
-msgid "Width(px):"
-msgstr "宽度（像素）:"
-
-#: prefs.js:401
-msgid "Height(px):"
-msgstr "高度（像素）:"
-
-#: prefs.js:418
-msgid "Shortcuts"
-msgstr "快捷键"
-
-#: prefs.js:436
-msgid "Search from clipboard"
-msgstr "从剪贴板中搜索"
-
-#: prefs.js:438
-msgid "Search from primary selection"
-msgstr "从选定内容中搜索"
-
-#: prefs.js:445
-msgid "Search from primary selection requires"
-msgstr "需要从选定内容中搜索"
-
-#: extension.js:387 extension.js:397 extension.js:417 extension.js:437
-msgid "Wikipedia Search Provider"
-msgstr "维基百科提供搜索服务"
-
-#: extension.js:388 extension.js:398
+#: extension.js:189
 msgid "Your search - "
-msgstr "您的搜索 - "
+msgstr "您的搜索 -"
 
-#: extension.js:388 extension.js:398
+#: extension.js:190
 msgid ""
 " - did not match any documents.\n"
 "Language: "
-msgstr " - 没有匹配的文件。\n"
-"语言："
+msgstr ""
+" - 没有匹配的文档。\n"
+"语言:"
 
-#: extension.js:418
-msgid "Enter your query."
-msgstr "请输入您的查询。"
+#: extension.js:221
+#, javascript-format
+msgid "Search for '%s'"
+msgstr "搜索 '%s'"
 
-#: extension.js:438
+#: extension.js:228
 msgid "Searching for "
-msgstr "搜索 "
+msgstr "搜索"
+
+#: prefs.js:66
+msgid "Action"
+msgstr "选项"
+
+#: prefs.js:84
+msgid "Can't change keybinding"
+msgstr "无法改变键的绑定"
+
+#: prefs.js:99
+msgid "Modify"
+msgstr "修改"
+
+#: prefs.js:377
+msgid "Main"
+msgstr "主要"
+
+#: prefs.js:381
+msgid "Enable dark theme:"
+msgstr "使黑暗主题:"
+
+#: prefs.js:386
+msgid "Show first in overview:"
+msgstr "首先在概览中显示:"
+
+#: prefs.js:391
+msgid "Exclude disambiguation pages:"
+msgstr "排除歧义页:"
+
+#: prefs.js:396
+msgid "Keyword:"
+msgstr "关键字:"
+
+#: prefs.js:401
+msgid "Default language:"
+msgstr "默认语言:"
+
+#: prefs.js:411
+msgid "Delay time(ms):"
+msgstr "延迟时间（毫秒）:"
+
+#: prefs.js:421
+msgid "Max chars:"
+msgstr "最多字符数:"
+
+#: prefs.js:431
+msgid "Max results:"
+msgstr "最大结果数:"
+
+#: prefs.js:439
+msgid "Max result columns:"
+msgstr "最大列数:"
+
+#: prefs.js:453
+msgid "Size"
+msgstr "大小"
+
+#: prefs.js:462
+msgid "Title font size(px):"
+msgstr "标题字体大小（像素）:"
+
+#: prefs.js:470
+msgid "Extract font size(px):"
+msgstr "概览字体大小（像素）:"
+
+#: prefs.js:480
+msgid "Result height(px):"
+msgstr "结果高度（像素）:"
+
+#: prefs.js:494 prefs.js:498
+msgid "Images"
+msgstr "图片"
+
+#: prefs.js:519
+msgid "Max width:"
+msgstr "最大宽度:"
+
+#: prefs.js:528
+msgid "Max height:"
+msgstr "最大高度:"
+
+#: prefs.js:543 prefs.js:547
+msgid "Shortcuts"
+msgstr "快捷键"
+
+#: prefs.js:563
+msgid "Search from clipboard"
+msgstr "从剪贴板中搜索"
+
+#: prefs.js:565
+msgid "Search from primary selection"
+msgstr "从选定内容中搜索"
+
+#: wikipedia_results_view.js:76
+msgid "Did you mean: "
+msgstr "你的意思是:"
+
+#: wikipedia_result_view.js:138
+msgid "copy url"
+msgstr "复制链接"
+
+#: wikipedia_result_view.js:211 wikipedia_result_view.js:281
+#, javascript-format
+msgid "more images(%s)"
+msgstr "更多图片(%s)"
+
+#: wikipedia_result_view.js:271
+msgid "loading..."
+msgstr "加载..."
+
+#: prefs.js:401
+msgid "Height(px):"
+msgstr "高度(像素):"
