@@ -1,0 +1,150 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Wikipedia Search Provider\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-07-12 21:37+0800\n"
+"PO-Revision-Date: 2014-07-12 21:53+0700\n"
+"Last-Translator: awamper <awamper@gmail.com>n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"Language: ru\n"
+
+#: extension.js:71
+msgid "Enter your query"
+msgstr "Введите запрос"
+
+#: extension.js:189
+msgid "Your search - "
+msgstr "Ваш запрос -"
+
+#: extension.js:190
+msgid ""
+" - did not match any documents.\n"
+"Language: "
+msgstr "- не дал результатов"
+
+#: extension.js:221
+#, javascript-format
+msgid "Search for '%s'"
+msgstr "Искать '%s'"
+
+#: extension.js:228
+msgid "Searching for "
+msgstr "Идет поиск"
+
+#: prefs.js:66
+msgid "Action"
+msgstr "Действие"
+
+#: prefs.js:84
+msgid "Can't change keybinding"
+msgstr "Не удалось изменить горячую клавишу"
+
+#: prefs.js:99
+msgid "Modify"
+msgstr "Изменить"
+
+#: prefs.js:377
+msgid "Main"
+msgstr "Основные настройки"
+
+#: prefs.js:381
+msgid "Enable dark theme:"
+msgstr "Включить темную тему оформления:"
+
+#: prefs.js:386
+msgid "Show first in overview:"
+msgstr "Всегда первый в результатах:"
+
+#: prefs.js:391
+msgid "Exclude disambiguation pages:"
+msgstr "Исключить двусмысленные статьи:"
+
+#: prefs.js:396
+msgid "Keyword:"
+msgstr "Ключевое слово:"
+
+#: prefs.js:401
+msgid "Default language:"
+msgstr "Язык по умолчанию:"
+
+#: prefs.js:411
+msgid "Delay time(ms):"
+msgstr "Задержка(мс):"
+
+#: prefs.js:421
+msgid "Max chars:"
+msgstr "Макисмум символов:"
+
+#: prefs.js:431
+msgid "Max results:"
+msgstr "Максимум результатов:"
+
+#: prefs.js:439
+msgid "Max result columns:"
+msgstr "Максимум колонок:"
+
+#: prefs.js:453
+msgid "Size"
+msgstr "Размер"
+
+#: prefs.js:462
+msgid "Title font size(px):"
+msgstr "Разме заголовка(пиксели):"
+
+#: prefs.js:470
+msgid "Extract font size(px):"
+msgstr "Размер текста(пиксели):"
+
+#: prefs.js:480
+msgid "Result height(px):"
+msgstr "Высота(пиксели):"
+
+#: prefs.js:494 prefs.js:498
+msgid "Images"
+msgstr "Изображения"
+
+#: prefs.js:519
+msgid "Max width:"
+msgstr "Максимальная ширина:"
+
+#: prefs.js:528
+msgid "Max height:"
+msgstr "Максимальная высота:"
+
+#: prefs.js:543 prefs.js:547
+msgid "Shortcuts"
+msgstr "Горячие клавиши"
+
+#: prefs.js:563
+msgid "Search from clipboard"
+msgstr "Искать из буфера обмена"
+
+#: prefs.js:565
+msgid "Search from primary selection"
+msgstr "Искать из \"primary selection\":"
+
+#: wikipedia_results_view.js:76
+msgid "Did you mean: "
+msgstr "Возможно вы имели в виду:"
+
+#: wikipedia_result_view.js:138
+msgid "copy url"
+msgstr "скопировать ссылку"
+
+#: wikipedia_result_view.js:211 wikipedia_result_view.js:281
+#, javascript-format
+msgid "more images(%s)"
+msgstr "больше изображений(%s)"
+
+#: wikipedia_result_view.js:271
+msgid "loading..."
+msgstr "загрузка..."

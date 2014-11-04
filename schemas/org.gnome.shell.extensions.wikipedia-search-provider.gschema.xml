@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnome-shell-extensions">
 
-  <enum id='org.gnome.shell.extensions.wikipedia-search-provider.Themes'>
-    <value value='0' nick='light'/>
-    <value value='1' nick='dark'/>
-  </enum>
-
   <schema path="/org/gnome/shell/extensions/wikipedia-search-provider/" id="org.gnome.shell.extensions.wikipedia-search-provider">
 
     <key type="b" name="enable-shortcuts">
+        <default>true</default>
+    </key>
+
+    <key type="b" name="enable-dark-theme">
+        <default>true</default>
+    </key>
+
+    <key type="b" name="show-first-in-overview">
         <default>true</default>
     </key>
 
@@ -43,12 +46,12 @@
       <default>12</default>
     </key>
 
-    <key type="i" name="result-width">
-      <default>500</default>
-    </key>
-
     <key type="i" name="result-height">
       <default>170</default>
+    </key>
+
+    <key type="i" name="result-width">
+      <default>0</default>
     </key>
 
     <key type="i" name="delay-time">
@@ -57,16 +60,29 @@
       <description>Delay time in milliseconds.</description>
     </key>
 
-    <key type="i" name="results-rows">
-      <default>5</default>
-      <summary>Max results rows</summary>
-      <description>Max results rows.</description>
+    <key type="i" name="max-results">
+      <default>6</default>
+      <summary>Max results</summary>
     </key>
 
-    <key name="theme" enum="org.gnome.shell.extensions.wikipedia-search-provider.Themes">
-      <default>"light"</default>
-      <summary>Theme</summary>
-      <description>Theme</description>
+    <key type="b" name="enable-images">
+        <default>true</default>
+    </key>
+
+    <key type="i" name="image-max-width">
+      <default>120</default>
+    </key>
+
+    <key type="i" name="image-max-height">
+      <default>100</default>
+    </key>
+
+    <key type="i" name="max-result-columns">
+      <default>2</default>
+    </key>
+
+    <key type="b" name="exclude-disambiguation-pages">
+        <default>true</default>
     </key>
 
   </schema>
