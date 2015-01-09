@@ -1,0 +1,152 @@
+# Uzbek@cyrillic translation.
+# Copyright (C) 2015 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Bahodir Mansurov <6ahodir@gmail.com>, 2015.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Wikipedia Search Provier\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-01-09 16:51-0500\n"
+"PO-Revision-Date: 2015-01-09 17:09-0500\n"
+"Last-Translator: Bahodir Mansurov <6ahodir@gmail.com>\n"
+"Language-Team: Ўзбек\n"
+"Language: uz\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: extension.js:71
+msgid "Enter your query"
+msgstr "Сўровингизни киритинг"
+
+#: extension.js:189
+msgid "Your search - "
+msgstr "Қидирганингиз - "
+
+#: extension.js:190
+msgid ""
+" - did not match any documents.\n"
+"Language: "
+msgstr ""
+" - натижа бермади.\n"
+"Тил: "
+
+#: extension.js:221
+#, javascript-format
+msgid "Search for '%s'"
+msgstr "'%s'ни излаш"
+
+#: extension.js:228
+msgid "Searching for "
+msgstr "Изланяпти "
+
+#: prefs.js:66
+msgid "Action"
+msgstr "Ҳаракат"
+
+#: prefs.js:84
+msgid "Can't change keybinding"
+msgstr "Тугмалар бирикмасини ўзгартириб бўлмади"
+
+#: prefs.js:99
+msgid "Modify"
+msgstr "Ўзгартириш"
+
+#: prefs.js:377
+msgid "Main"
+msgstr "Асосий"
+
+#: prefs.js:381
+msgid "Enable dark theme:"
+msgstr "Қоронғу мавзуни ёқиш:"
+
+#: prefs.js:386
+msgid "Show first in overview:"
+msgstr "Биринчисини кўрсатмада кўрсатиш:"
+
+#: prefs.js:391
+msgid "Exclude disambiguation pages:"
+msgstr "Иккиламчи саҳифаларни олиб ташлаш:"
+
+#: prefs.js:396
+msgid "Keyword:"
+msgstr "Калит сўзлар:"
+
+#: prefs.js:401
+msgid "Default language:"
+msgstr "Сукут тил:"
+
+#: prefs.js:411
+msgid "Delay time(ms):"
+msgstr "Кечиктириш вақти (миллисекундда):"
+
+#: prefs.js:421
+msgid "Max chars:"
+msgstr "Максимум ишоралар:"
+
+#: prefs.js:431
+msgid "Max results:"
+msgstr "Максимум натижалар:"
+
+#: prefs.js:439
+msgid "Max result columns:"
+msgstr "Максимум натижалара устунлари:"
+
+#: prefs.js:453
+msgid "Size"
+msgstr "Ҳажми"
+
+#: prefs.js:462
+msgid "Title font size(px):"
+msgstr "Сарлавҳа шрифт ҳажми (пикселда)"
+
+#: prefs.js:470
+msgid "Extract font size(px):"
+msgstr "Парча шрифт ҳажми (пикселда)"
+
+#: prefs.js:480
+msgid "Result height(px):"
+msgstr "Натижа баландлиги (пикселда):"
+
+#: prefs.js:494 prefs.js:498
+msgid "Images"
+msgstr "Расмлар"
+
+#: prefs.js:519
+msgid "Max width:"
+msgstr "Максимум кенглик:"
+
+#: prefs.js:528
+msgid "Max height:"
+msgstr "Максимум баландлик:"
+
+#: prefs.js:543 prefs.js:547
+msgid "Shortcuts"
+msgstr "Тугмалар бирикмаси"
+
+#: prefs.js:563
+msgid "Search from clipboard"
+msgstr "Алмашиш буферидан излаш"
+
+#: prefs.js:565
+msgid "Search from primary selection"
+msgstr "Асосий танланмадан излаш"
+
+#: wikipedia_results_view.js:76
+msgid "Did you mean: "
+msgstr "Буни назарда тутдингизми: "
+
+#: wikipedia_result_view.js:138
+msgid "copy url"
+msgstr "веб манзилни кўчириш"
+
+#: wikipedia_result_view.js:211 wikipedia_result_view.js:281
+#, javascript-format
+msgid "more images(%s)"
+msgstr "яна расмлар (%s)"
+
+#: wikipedia_result_view.js:271
+msgid "loading..."
+msgstr "юкланяпти..."
