@@ -5,6 +5,7 @@ const Mainloop = imports.mainloop;
 const Clutter = imports.gi.Clutter;
 const Tweener = imports.ui.tweener;
 const Signals = imports.signals;
+const Gio = imports.gi.Gio;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
@@ -291,8 +292,9 @@ const WikipediaImageView = new Lang.Class({
 
         let scale_factor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         let texture_cache = St.TextureCache.get_default();
-        this._image_actor = texture_cache.load_uri_async(
-            this._wikipedia_image.thumb_url,
+        let image_file = Gio.file_new_for_uri(this._wikipedia_image.thumb_url)
+        this._image_actor = texture_cache.load_file_async(
+            image_file,
             this._wikipedia_image.thumb_width,
             this._wikipedia_image.thumb_height,
             scale_factor
