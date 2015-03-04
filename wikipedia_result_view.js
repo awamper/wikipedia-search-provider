@@ -210,7 +210,7 @@ const WikipediaResultView = new Lang.Class({
         if(!show_image) return;
 
         if(this._wikipedia_page.images.length > 1) {
-            this._more_images_button.label = _('more images(%s)').format(
+            this._more_images_button.label = _('more images')+' (%s)'.format(
                 this._wikipedia_page.images.length - 1
             );
             this._more_images_button.show();
@@ -280,7 +280,7 @@ const WikipediaResultView = new Lang.Class({
         this._wikipedia_image_resuls.set_images(image_views);
         this._wikipedia_image_resuls.connect('loaded',
             Lang.bind(this, function() {
-                this._more_images_button.label = _('more images(%s)').format(
+                this._more_images_button.label = _('more images')+' (%s)'.format(
                     this._wikipedia_page.images.length - 1
                 );
                 this._more_images_button.remove_style_pseudo_class('inactive');

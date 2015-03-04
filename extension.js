@@ -240,7 +240,7 @@ const WikipediaSearchProvider = new Lang.Class({
             Lang.bind(this, function() {
                 this._remove_timeout();
                 this._insert_wikipedia_display();
-                let message = _("Searching for ") + "'" + term + "'...";
+                let message = _("Searching for '%s'...").format(term)
                 this.show_message(message);
 
                 this._wikipedia_client.lang = lang;
