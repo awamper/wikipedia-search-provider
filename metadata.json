@@ -4,7 +4,8 @@
   "name": "Wikipedia Search Provider",
   "shell-version": [
       "3.15.90",
-      "3.16"
+      "3.16",
+      "3.18"
   ],
   "url": "https://github.com/awamper/wikipedia-search-provider",
   "uuid": "wikipedia_search_provider@awamper.gmail.com",

@@ -3,6 +3,7 @@ const Lang = imports.lang;
 const Main = imports.ui.main;
 const Signals = imports.signals;
 const Separator = imports.ui.separator;
+const Clutter = imports.gi.Clutter;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
@@ -64,8 +65,9 @@ const WikipediaResultsView = new Lang.Class({
             style_class: 'wikipedia-results-box'
         })
 
-        this._table = new St.Table({
-            homogeneous: false
+
+        this._table = new St.Widget({
+            layout_manager: new Clutter.TableLayout()
         });
         this._separator = new Separator.HorizontalSeparator({
             style_class: 'search-section-separator'
@@ -124,16 +126,8 @@ const WikipediaResultsView = new Lang.Class({
                     this.emit("activate", button, result);
                 })
             );
-            this._table.add(result.actor, {
-                row: row,
-                col: column,
-                x_expand: true,
-                y_expand: true,
-                x_fill: true,
-                y_fill: false,
-                x_align: St.Align.MIDDLE,
-                y_align: St.Align.MIDDLE
-            });
+            let layout = this._table.layout_manager;
+            layout.pack(result.actor, column, row);
 
             if(column === max_columns - 1) row++;
         }

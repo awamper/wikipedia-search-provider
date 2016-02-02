@@ -35,7 +35,9 @@ const WikipediaImageView = new Lang.Class({
             Lang.bind(this, this._load_image)
         );
 
-        this._table = new St.Table();
+        this._table = new St.Widget({
+          layout_manager: new Clutter.TableLayout()
+        });
 
         this.actor = new St.BoxLayout({
             reactive: true
@@ -50,16 +52,8 @@ const WikipediaImageView = new Lang.Class({
             icon_name: Utils.ICONS.CAMERA,
             icon_size: CAMERA_ICON_SIZE
         });
-        this._table.add(this._image_dummy, {
-            row: 0,
-            col: 0,
-            x_expand: true,
-            y_expand: true,
-            y_fill: false,
-            x_fill: false,
-            x_align: St.Align.MIDDLE,
-            y_align: St.Align.MIDDLE
-        });
+        this._table.layout_manager.pack(this._image_dummy, 0, 0);
+
 
         this._zoom_icon = new St.Icon({
             icon_name: Utils.ICONS.ZOOM_IN,
@@ -152,16 +146,7 @@ const WikipediaImageView = new Lang.Class({
     _add_image_menu: function() {
         if(this._table.contains(this._image_menu_box)) return;
 
-        this._table.add(this._image_menu_box, {
-            row: 0,
-            col: 0,
-            x_expand: true,
-            y_expand: true,
-            y_fill: false,
-            x_fill: false,
-            x_align: St.Align.END,
-            y_align: St.Align.END
-        });
+        this._table.layout_manager.pack(this._image_menu_box, 0, 0);
         this._image_menu_box.translation_y = -(
             this._image_actor.y - this._image_menu_box.y
         );
@@ -332,16 +317,7 @@ const WikipediaImageView = new Lang.Class({
             })
         );
 
-        this._table.add(this._image_actor, {
-            row: 0,
-            col: 0,
-            x_expand: true,
-            y_expand: true,
-            y_fill: false,
-            x_fill: false,
-            x_align: St.Align.MIDDLE,
-            y_align: St.Align.MIDDLE
-        });
+        this._table.layout_manager.pack(this._image_actor, 0, 0);
     },
 
     show: function() {

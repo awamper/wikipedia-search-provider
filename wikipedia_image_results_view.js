@@ -2,6 +2,7 @@ const St = imports.gi.St;
 const Lang = imports.lang;
 const Signals = imports.signals;
 const Main = imports.ui.main;
+const Clutter = imports.gi.Clutter;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const PopupDialog = Me.imports.popup_dialog;
@@ -19,8 +20,8 @@ const WikipediaImageResultsView = new Lang.Class({
             style_class: 'wikipedia-image-results-view'
         });
 
-        this._table = new St.Table({
-            homogeneous: false
+        this._table = new St.Widget({
+            layout_manager: new Clutter.TableLayout()
         });
         this.actor.add(this._table, {
             x_expand: true,
