@@ -80,16 +80,7 @@ const WikipediaImageResultsView = new Lang.Class({
                 n_current_images = 1;
             }
 
-            this._table.add(image_view.actor, {
-                row: row,
-                col: column,
-                x_expand: false,
-                y_expand: false,
-                x_fill: false,
-                y_fill: false,
-                x_align: St.Align.MIDDLE,
-                y_align: St.Align.MIDDLE
-            });
+            this._table.layout_manager.pack(image_view.actor, column, row);
             column++;
         }
     },
