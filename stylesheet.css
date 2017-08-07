@@ -107,7 +107,7 @@
 }
 
 .wikipedia-result-buttons {
-    font-size: 12px;
+    font-size: 12pt;
     font-weight: bold;
     color: gray;
 }
@@ -133,14 +133,14 @@
 
 .wikipedia-copy-url-label {
     background-color: rgba(52, 101, 164, 0.7);
-    font-size: 14px;
+    font-size: 16pt;
     color: white;
     border: 1px solid #0D4CA3;
     padding: 5px;
 }
 
 .wikipedia-copy-url-button {
-    icon-size: 14px;
+    icon-size: 18px;
     padding: 2px;
     color: grey;
 }
