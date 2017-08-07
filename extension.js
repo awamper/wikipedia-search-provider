@@ -373,7 +373,6 @@ const WikipediaSearchProvider = new Lang.Class({
             Utils.SETTINGS,
             Meta.KeyBindingFlags.NONE,
             Shell.ActionMode.NORMAL |
-            Shell.ActionMode.MESSAGE_TRAY |
             Shell.ActionMode.OVERVIEW,
             Lang.bind(this, function() {
                 this.search_from_clipborad(St.ClipboardType.CLIPBOARD);
@@ -384,7 +383,6 @@ const WikipediaSearchProvider = new Lang.Class({
             Utils.SETTINGS,
             Meta.KeyBindingFlags.NONE,
             Shell.ActionMode.NORMAL |
-            Shell.ActionMode.MESSAGE_TRAY |
             Shell.ActionMode.OVERVIEW,
             Lang.bind(this, function() {
                 this.search_from_clipborad(St.ClipboardType.PRIMARY);
