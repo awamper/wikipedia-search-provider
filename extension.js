@@ -308,7 +308,7 @@ const WikipediaSearchProvider = new Lang.Class({
 
     _animate_activation: function(wikipedia_result_view) {
         Main.overview.toggle();
-        [x, y] = wikipedia_result_view.actor.get_transformed_position();
+        let [x, y] = wikipedia_result_view.actor.get_transformed_position();
         let clone = new Clutter.Clone({
             source: wikipedia_result_view.actor,
             width: wikipedia_result_view.actor.width,
