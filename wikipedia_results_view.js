@@ -2,7 +2,6 @@ const St = imports.gi.St;
 const Lang = imports.lang;
 const Main = imports.ui.main;
 const Signals = imports.signals;
-const Separator = imports.ui.separator;
 const Clutter = imports.gi.Clutter;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -69,9 +68,6 @@ const WikipediaResultsView = new Lang.Class({
         this._table = new St.Widget({
             layout_manager: new Clutter.TableLayout()
         });
-        this._separator = new Separator.HorizontalSeparator({
-            style_class: 'search-section-separator'
-        });
 
         this._suggestion =
             new WikipediaSearchSuggestion.WikipediaSearchSuggestion();
@@ -90,7 +86,6 @@ const WikipediaResultsView = new Lang.Class({
             y_align: St.Align.START
         });
         this.actor.add(this._table);
-        this.actor.add_child(this._separator.actor);
     },
 
     _on_suggestion_activated: function(wikipedia_search_suggestion) {
